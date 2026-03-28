@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fairwai — Simulateur Tarifaire</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#EDEAE4; --bg-card:#F7F5F1; --white:#FFFFFF; --black:#111;
+  --text:#1A1A1A; --text-mid:#4A4A4A; --text-light:#888880;
+  --border:#DEDAD3; --border-light:#E8E4DE;
+  --accent:#3452FF; --accent-mid:#2540E8; --accent-light:#EEF0FF; --accent-text:#2032C4;
+  --green:#18A558; --green-light:#E8F7EF;
+  --gold:#C97B0A; --gold-light:#FEF3DC;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06); --shadow:0 2px 12px rgba(0,0,0,.07);
+  --radius:12px; --radius-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ── HEADER ── */
+header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-text{font-size:26px;font-weight:800;color:var(--black);letter-spacing:-1px}
+.logo-text span{color:var(--accent)}
+.header-title{flex:1;text-align:center;font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.header-title em{color:var(--accent);font-style:normal}
+
+/* Portfolio box */
+.portfolio-box{background:linear-gradient(135deg,#FFF8E1,#FFF3CD);border:2px solid #F5C518;border-radius:var(--radius);padding:8px 16px;text-align:center;flex-shrink:0}
+.portfolio-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gold)}
+.portfolio-row{display:flex;gap:18px;margin-top:2px}
+.portfolio-val{font-size:14px;font-weight:800}
+.portfolio-val.ca{color:var(--accent)}
+.portfolio-val.gain{color:var(--green)}
+.portfolio-label{font-size:9px;color:var(--text-light);font-weight:600}
+
+/* Espace commercial */
+.espace-box{background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 14px;text-align:center;flex-shrink:0;cursor:pointer;transition:border-color .15s}
+.espace-box:hover{border-color:var(--accent)}
+.espace-label{font-size:10px;font-weight:600;color:var(--text-light)}
+.espace-name{font-size:13px;font-weight:700;color:var(--text)}
+
+/* ── TAB NAV ── */
+.tab-nav{background:var(--bg);border-bottom:1px solid var(--border);padding:8px 0;position:sticky;top:68px;z-index:90}
+.tab-nav-inner{max-width:1200px;margin:0 auto;padding:0 40px;display:flex;gap:12px;justify-content:center}
+.tab-btn{flex:1;max-width:280px;padding:10px 20px;border:2px solid var(--border);background:var(--white);border-radius:var(--radius-lg);font-size:15px;font-weight:700;color:var(--text-mid);cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:12px;font-family:inherit;box-shadow:var(--shadow-sm)}
+.tab-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px);box-shadow:var(--shadow)}
+.tab-btn.active{border-color:var(--accent);background:var(--accent);color:var(--white);box-shadow:0 4px 16px rgba(52,82,255,.3)}
+.tab-btn-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.15);flex-shrink:0}
+.tab-btn:not(.active) .tab-btn-icon{background:var(--bg-card)}
+.tab-btn-text{text-align:left}
+.tab-btn-title{display:block;font-size:15px;font-weight:700;line-height:1.2}
+.tab-btn-sub{display:block;font-size:11px;font-weight:500;opacity:.7;margin-top:2px}
+
+/* ── SIM BAR ── */
+.sim-bar{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:122px;z-index:80}
+.sim-inner{max-width:1200px;margin:0 auto;padding:12px 40px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.sim-label{font-size:12px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+.sim-controls{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.margin-input-wrap{display:flex;align-items:center;gap:10px}
+.margin-input-wrap label{font-size:13px;font-weight:600;color:var(--text-mid)}
+.margin-range{-webkit-appearance:none;width:140px;height:4px;border-radius:2px;background:var(--border);outline:none;cursor:pointer}
+.margin-range::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 1px 6px rgba(52,82,255,.35)}
+.margin-num{width:62px;padding:5px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-weight:700;color:var(--accent);text-align:center;outline:none;font-family:inherit;background:var(--white)}
+.margin-num:focus{border-color:var(--accent)}
+.sim-info{margin-left:auto;font-size:12px;color:var(--text-light)}
+.sim-info span{font-weight:700;color:var(--accent)}
+
+/* Toggle */
+.toggle-billing{display:flex;background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:3px;gap:3px}
+.toggle-billing button{padding:7px 18px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--accent);background:transparent;font-family:inherit}
+.toggle-billing button.active{background:var(--accent);color:var(--white);box-shadow:0 2px 8px rgba(52,82,255,.3)}
+
+/* ── RECO BAR ── */
+.reco-bar{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:178px;z-index:70}
+.reco-inner{max-width:1200px;margin:0 auto;padding:14px 40px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.reco-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.reco-label{font-size:13px;font-weight:600;color:var(--text-mid);white-space:nowrap}
+.reco-input-wrap{display:flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:5px 10px}
+.reco-input{width:64px;border:none;background:transparent;font-size:15px;font-weight:700;color:var(--text);font-family:inherit;outline:none;text-align:center}
+.reco-unit{font-size:12px;font-weight:600;color:var(--text-light)}
+.reco-result{flex:1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.reco-placeholder{font-size:13px;color:var(--text-light);font-style:italic}
+.reco-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;border-radius:8px;padding:5px 14px}
+.reco-badge-custom{background:var(--gold)}
+
+/* Telephony option */
+.telco-option{display:flex;align-items:center;gap:10px;margin-left:auto}
+.telco-label{font-size:12px;font-weight:600;color:var(--text-mid);white-space:nowrap}
+.telco-check{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.telco-price-wrap{display:flex;align-items:center;gap:4px}
+.telco-price-input{width:56px;padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;text-align:center;font-family:inherit;color:var(--accent);background:var(--white)}
+.telco-price-input:focus{border-color:var(--accent);outline:none}
+
+/* ── MAIN ── */
+main{max-width:1200px;margin:0 auto;padding:16px 40px 80px}
+.section-header{margin-bottom:16px;padding:16px 20px;background:var(--white);border-radius:var(--radius);border-left:4px solid var(--accent);box-shadow:var(--shadow-sm)}
+.section-title{font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.5px}
+.section-subtitle{font-size:13px;font-weight:500;color:var(--text-mid);margin-top:3px}
+.tab-page{display:none}
+.tab-page.active{display:block}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);overflow-x:auto;margin-bottom:20px}
+.table-title{padding:16px 24px;font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border-light)}
+.table-title-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--bg-card);color:var(--text-light);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
+thead tr{background:var(--bg-card)}
+thead th{padding:11px 18px;text-align:left;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;white-space:normal;line-height:1.3;vertical-align:bottom;border-bottom:1px solid var(--border-light)}
+thead th:first-child{padding-left:24px}
+tbody tr{border-bottom:1px solid var(--border-light);transition:background .12s;cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg-card)}
+tbody td{padding:14px 18px;vertical-align:middle}
+tbody td:first-child{padding-left:24px}
+.palier-badge{display:inline-flex;align-items:center;background:var(--text);color:var(--white);padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700}
+
+/* Column highlights */
+/* Col 2: Prix achat */
+thead th:nth-child(2){color:var(--text);background:#F0EDE8}
+tbody td:nth-child(2){background:#F7F5F1;border-left:2px solid var(--border);border-right:2px solid var(--border)}
+/* Col 3: Client/poste */
+thead th:nth-child(3){color:var(--green);background:#F4FCF7}
+tbody td:nth-child(3){background:#F9FDF9}
+/* Col 4: Prix client suggéré */
+thead th:nth-child(4){color:var(--green);background:#EFF9F4}
+tbody td:nth-child(4){background:#F4FCF7;border-left:2px solid #C5E8D5;border-right:2px solid #C5E8D5}
+/* Col 5: Gain */
+thead th:nth-child(5){color:var(--accent-text);background:#EEF0FF}
+tbody td:nth-child(5){background:#F5F7FF;border-left:1px solid #C7CCFF;border-right:1px solid #C7CCFF}
+
+/* Row highlight */
+.row-recommended{box-shadow:inset 5px 0 0 var(--accent);background:#EEF1FF!important;outline:2px solid rgba(52,82,255,.25);outline-offset:-1px}
+.row-recommended td{font-weight:700!important}
+.row-selected{box-shadow:inset 5px 0 0 var(--green);background:#F0FFF5!important;outline:2px solid rgba(24,165,88,.3);outline-offset:-1px}
+.reco-star{font-size:10px;font-weight:700;background:var(--accent);color:#fff;border-radius:4px;padding:2px 5px;letter-spacing:.3px;vertical-align:middle;margin-left:4px}
+
+/* ── INLINE CALC ── */
+.calc-inline-row{border-top:1.5px dashed var(--border)!important;background:var(--bg-card)!important;cursor:default}
+.calc-inline-row:hover{background:var(--bg-card)!important}
+.inline-hours-wrap{display:flex;align-items:center;gap:8px}
+.inline-hours-label{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.inline-hours-input{width:80px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-weight:700;color:var(--text);text-align:center;outline:none;font-family:inherit;background:var(--white)}
+.inline-hours-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(52,82,255,.1)}
+.ic-empty{font-size:13px;color:var(--border);font-weight:500}
+
+/* ── LICENCE CARD ── */
+.licence-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:20px}
+.licence-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);padding:24px;position:relative;overflow:hidden}
+.licence-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.licence-card.exec::before{background:var(--accent)}
+.licence-card.voice-ind::before{background:#E040FB}
+.licence-name{font-size:16px;font-weight:800;color:var(--text);margin-bottom:3px}
+.licence-note{font-size:12px;color:var(--text-light);margin-bottom:18px}
+.licence-prices{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.lp-block{border-radius:var(--radius);padding:12px 14px;text-align:center}
+.lp-block-achat{background:#F7F5F1;border:2px solid var(--border)}
+.lp-block-sell{background:var(--accent-light);border:1px solid #C7CCFF}
+.lp-block-client{background:#F4FCF7;border:2px solid #C5E8D5}
+.lp-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-light);margin-bottom:6px}
+.lp-value{font-size:16px;font-weight:800;line-height:1.2}
+.lp-sub{font-size:10px;margin-top:3px;opacity:.75}
+
+/* ── NOTE BOX ── */
+.note-box{display:flex;align-items:flex-start;gap:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-top:0;font-size:13px;color:var(--text-mid)}
+
+/* ── CTA ── */
+.custom-offer{background:var(--text);border-radius:var(--radius-lg);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:20px}
+.custom-offer-text{color:#fff}
+.custom-offer-text h3{font-size:18px;font-weight:800;margin-bottom:4px}
+.custom-offer-text p{font-size:13px;color:rgba(255,255,255,.55)}
+.btn-contact{background:var(--white);color:var(--text);border:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-contact:hover{background:var(--accent);color:#fff;transform:translateY(-1px)}
+
+/* ── DEVIS FAB ── */
+.devis-fab{position:fixed;bottom:32px;right:32px;background:var(--accent);color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(52,82,255,.4);z-index:200;font-family:inherit;transition:transform .15s,box-shadow .15s}
+.devis-fab:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(52,82,255,.5)}
+
+/* ── DEVIS OVERLAY ── */
+.devis-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:20px}
+.devis-overlay.open{display:flex}
+.devis-modal{background:#fff;border-radius:16px;width:100%;max-width:1100px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.devis-modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-bottom:1px solid var(--border);flex-shrink:0}
+.devis-modal-title{font-size:18px;font-weight:800;color:var(--text)}
+.devis-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-light);padding:4px 8px;border-radius:6px}
+.devis-close:hover{background:var(--bg)}
+.devis-modal-body{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;overflow:hidden}
+.devis-form{padding:24px 28px;border-right:1px solid var(--border);overflow-y:auto}
+.devis-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:12px}
+
+/* Partie blocks */
+.dv-partie{border-radius:12px;border:2px solid var(--border);overflow:hidden;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.dv-partie-header{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13px;font-weight:800;border-bottom:2px solid transparent}
+.dv-partie-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.dv-partie-body{padding:14px 16px 6px}
+.dv-partie--partenaire{border-color:rgba(52,82,255,.35)}
+.dv-partie--partenaire .dv-partie-header{background:linear-gradient(90deg,#EEF0FF,#F4F6FF);color:var(--accent-text);border-bottom-color:rgba(52,82,255,.2)}
+.dv-partie--partenaire .dv-partie-icon{background:var(--accent);color:#fff}
+.dv-partie--partenaire .dv-partie-body{background:#FAFBFF}
+.dv-partie--client{border-color:rgba(24,165,88,.35)}
+.dv-partie--client .dv-partie-header{background:linear-gradient(90deg,#E8F7EF,#F2FBF6);color:#0F7A3E;border-bottom-color:rgba(24,165,88,.2)}
+.dv-partie--client .dv-partie-icon{background:var(--green);color:#fff}
+.dv-partie--client .dv-partie-body{background:#FAFDFB}
+
+.devis-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.devis-field{display:flex;flex-direction:column;gap:5px}
+.devis-field label{font-size:12px;font-weight:600;color:var(--text-mid)}
+.devis-field input,.devis-field select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--bg-card);outline:none}
+.devis-field input:focus,.devis-field select:focus{border-color:var(--accent);background:#fff}
+
+/* Logo upload */
+.logo-upload-zone{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1.5px dashed var(--border);border-radius:10px;cursor:pointer;transition:border-color .15s;margin-bottom:12px}
+.logo-upload-zone:hover{border-color:var(--accent)}
+.logo-upload-zone img{max-height:40px;max-width:120px;border-radius:6px}
+.logo-upload-text{font-size:11px;color:var(--text-light);font-weight:500}
+
+/* Packs */
+.devis-packs{display:flex;flex-direction:column;gap:8px}
+.devis-pack-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .15s,background .15s;background:var(--bg-card)}
+.devis-pack-item:hover{border-color:var(--accent)}
+.devis-pack-item.selected{border-color:var(--accent);background:var(--accent-light)}
+.devis-pack-item input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.devis-pack-label{flex:1;font-size:13px;font-weight:600;color:var(--text)}
+.devis-pack-price{font-size:13px;font-weight:700;color:var(--accent)}
+.dv-qty-wrap{display:none;align-items:center;gap:3px}
+.dv-qty-wrap.visible{display:flex}
+.dv-qty{width:42px;padding:3px 5px;border:1.5px solid var(--accent);border-radius:6px;font-size:12px;font-weight:700;text-align:center;color:var(--accent);font-family:inherit}
+
+/* Sur mesure lines */
+.dv-sm-container{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.dv-sm-header{display:grid;grid-template-columns:1fr 40px 78px 52px 24px;gap:5px;padding:0 0 2px}
+.dv-sm-header span{font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.4px}
+.dv-ligne-sm{display:grid;grid-template-columns:1fr 40px 78px 52px 24px;gap:5px;align-items:center}
+.dv-ligne-sm input{padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;background:var(--white);width:100%;font-family:inherit}
+.dv-ligne-sm input:focus{border-color:var(--accent);outline:none}
+.dv-sm-remove{background:none;border:none;color:var(--text-light);cursor:pointer;font-size:16px;padding:0 2px;border-radius:4px;font-family:inherit}
+.dv-sm-remove:hover{color:#e53e3e}
+.dv-add-ligne{width:100%;padding:7px;border:1.5px dashed var(--border);background:transparent;border-radius:8px;font-size:12px;font-weight:600;color:var(--text-mid);cursor:pointer;transition:all .15s;font-family:inherit}
+.dv-add-ligne:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Preview */
+.devis-preview-wrap{padding:24px 28px;overflow-y:auto;display:flex;flex-direction:column}
+#devisPreview{flex:1;overflow-y:auto}
+.devis-preview{background:var(--bg-card);border-radius:10px;padding:20px;font-size:12px;min-height:300px;border:1px solid var(--border)}
+.devis-actions{display:flex;gap:10px;margin-top:16px}
+.btn-devis-print,.btn-devis-pdf{flex:1;padding:10px;border-radius:8px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.btn-devis-print{background:var(--bg);color:var(--text);border:1.5px solid var(--border)}
+.btn-devis-pdf{background:var(--accent);color:#fff}
+
+/* Billing row */
+.devis-billing-row{display:flex;align-items:center;gap:10px;padding:10px 0 14px}
+.devis-billing-label{font-size:12px;font-weight:600;color:var(--text-mid)}
+.devis-billing-toggle{display:flex;border:1.5px solid var(--accent);border-radius:8px;overflow:hidden}
+.dv-btn-billing{padding:5px 14px;border:none;background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:var(--accent);transition:all .15s;font-family:inherit}
+.dv-btn-billing.active{background:var(--accent);color:#fff}
+
+/* ── HISTORY PANEL ── */
+.history-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;align-items:center;justify-content:center;padding:20px}
+.history-overlay.open{display:flex}
+.history-modal{background:#fff;border-radius:16px;width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.history-modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-bottom:1px solid var(--border)}
+.history-modal-title{font-size:16px;font-weight:800;color:var(--text)}
+.history-list{padding:20px 28px;overflow-y:auto;flex:1}
+.history-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border:1px solid var(--border-light);border-radius:10px;margin-bottom:8px;transition:background .12s}
+.history-item:hover{background:var(--bg-card)}
+.history-item-info{flex:1}
+.history-item-title{font-size:13px;font-weight:700;color:var(--text)}
+.history-item-sub{font-size:11px;color:var(--text-light);margin-top:2px}
+.history-item-amount{text-align:right}
+.history-item-ca{font-size:14px;font-weight:800;color:var(--accent)}
+.history-item-gain{font-size:12px;font-weight:700;color:var(--green)}
+.history-empty{text-align:center;padding:40px;color:var(--text-light);font-size:14px}
+
+/* Dashboard KPI in history */
+.history-dashboard{padding:20px 28px 0;border-bottom:1px solid var(--border-light)}
+.history-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.history-kpi{background:var(--bg-card);border-radius:10px;padding:12px;text-align:center;border:1px solid var(--border-light)}
+.history-kpi-num{font-size:20px;font-weight:800;line-height:1.2}
+.history-kpi-label{font-size:10px;font-weight:600;color:var(--text-light);margin-top:4px;text-transform:uppercase;letter-spacing:.4px}
+.history-kpi-num.blue{color:var(--accent)}
+.history-kpi-num.gold{color:var(--gold)}
+.history-kpi-num.green{color:var(--green)}
+.history-kpi-num.red{color:#E53E3E}
+
+/* Lost reasons summary */
+.lost-reasons-summary{margin-bottom:16px}
+.lost-reasons-title{font-size:11px;font-weight:700;color:#E53E3E;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.lost-reason-bar{display:flex;align-items:center;gap:10px;padding:6px 10px;background:#FFF5F5;border-radius:6px;margin-bottom:4px;font-size:12px}
+.lost-reason-text{flex:1;color:var(--text-mid);font-weight:500}
+.lost-reason-count{font-weight:700;color:#E53E3E;font-size:11px;background:#FECACA;padding:2px 8px;border-radius:10px}
+
+/* Filter tabs in history */
+.history-filters{display:flex;gap:6px;margin-bottom:16px}
+.history-filter-btn{padding:5px 14px;border:1.5px solid var(--border);border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;background:var(--white);color:var(--text-mid);transition:all .15s;font-family:inherit}
+.history-filter-btn:hover{border-color:var(--accent)}
+.history-filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Status badges */
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .15s;white-space:nowrap}
+.status-badge.en-cours{background:#FFF8E1;color:#C97B0A;border-color:#F5C518}
+.status-badge.signe{background:#E8F7EF;color:#18A558;border-color:#18A558}
+.status-badge.perdu{background:#FFF5F5;color:#E53E3E;border-color:#E53E3E}
+
+/* Status selector dropdown */
+.status-dropdown{position:relative;display:inline-block}
+.status-menu{display:none;position:absolute;right:0;top:100%;margin-top:4px;background:#fff;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:10;min-width:180px;overflow:hidden}
+.status-menu.open{display:block}
+.status-menu-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border-light)}
+.status-menu-item:last-child{border:none}
+.status-menu-item:hover{background:var(--bg-card)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.status-dot.en-cours{background:#F5C518}
+.status-dot.signe{background:#18A558}
+.status-dot.perdu{background:#E53E3E}
+
+/* Lost reason */
+.lost-reason{font-size:11px;color:#E53E3E;margin-top:3px;font-style:italic}
+.lost-reason-input{width:100%;padding:6px 10px;border:1.5px solid #E53E3E;border-radius:6px;font-size:11px;font-family:inherit;color:var(--text);margin-top:6px;outline:none}
+.lost-reason-input:focus{box-shadow:0 0 0 2px rgba(229,62,62,.15)}
+
+/* History actions (3 dots menu) */
+.history-actions{position:relative}
+.btn-history-more{background:none;border:none;color:var(--text-light);cursor:pointer;font-size:18px;padding:4px 6px;border-radius:6px;line-height:1}
+.btn-history-more:hover{background:var(--bg-card);color:var(--text)}
+.actions-menu{display:none;position:absolute;right:0;top:100%;margin-top:4px;background:#fff;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:10;min-width:160px;overflow:hidden}
+.actions-menu.open{display:block}
+.actions-menu-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border-light)}
+.actions-menu-item:last-child{border:none}
+.actions-menu-item:hover{background:var(--bg-card)}
+.actions-menu-item.danger{color:#E53E3E}
+.actions-menu-item.danger:hover{background:#FFF5F5}
+
+/* ── PRINT ── */
+@media print{body>*:not(#printDevis){display:none!important}#printDevis{display:block!important;padding:0;margin:0}@page{margin:15mm;size:A4}}
+#printDevis{display:none}
+
+/* ── FOOTER ── */
+footer{background:var(--text);color:rgba(255,255,255,.4);text-align:center;padding:20px 32px;font-size:12px}
+footer strong{color:rgba(255,255,255,.8)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .header-inner,.sim-inner,.tab-nav-inner,.reco-inner,main{padding-left:20px;padding-right:20px}
+  .sim-info,.portfolio-box{display:none}
+  thead th,tbody td{padding:10px 12px}
+  .header-title{font-size:16px}
+  .devis-modal-body{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-text">fairw<span>.ai</span></div>
+    </a>
+    <div class="header-title">Simulateur Tarifaire <em>Marque Blanche</em></div>
+    <div class="portfolio-box" id="portfolioBox">
+      <div class="portfolio-title">Mon portefeuille total</div>
+      <div class="portfolio-row">
+        <div><div class="portfolio-val ca" id="portfolioCA">0 €</div><div class="portfolio-label">CA HT</div></div>
+        <div><div class="portfolio-val gain" id="portfolioGain">0 €</div><div class="portfolio-label">Marge HT</div></div>
+      </div>
+    </div>
+    <div class="espace-box" id="espaceBox" onclick="openHistory()">
+      <div class="espace-label">Espace Commercial</div>
+      <div class="espace-name" id="espaceName">—</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ TAB NAV ═══ -->
+<div class="tab-nav">
+  <div class="tab-nav-inner">
+    <button id="tab360" class="tab-btn active" onclick="switchTab('360')">
+      <span class="tab-btn-icon">🎯</span>
+      <span class="tab-btn-text">
+        <span class="tab-btn-title">Fairwai 360</span>
+        <span class="tab-btn-sub">Visio · Voice · Présentiel</span>
+      </span>
+    </button>
+    <button id="tabVoice" class="tab-btn" onclick="switchTab('voice')">
+      <span class="tab-btn-icon">📞</span>
+      <span class="tab-btn-text">
+        <span class="tab-btn-title">Fairwai Voice</span>
+        <span class="tab-btn-sub">Voice uniquement</span>
+      </span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ SIM BAR ═══ -->
+<div class="sim-bar">
+  <div class="sim-inner">
+    <span class="sim-label">Simulateur de marge</span>
+    <div class="sim-controls">
+      <div class="margin-input-wrap">
+        <label for="marginRange">Votre marge :</label>
+        <input type="range" id="marginRange" class="margin-range" min="0" max="100" value="40" step="1">
+        <input type="number" id="marginNum" class="margin-num" value="40" min="0" max="100">
+        <span style="font-size:14px;font-weight:700;color:var(--text-light)">%</span>
+      </div>
+      <div class="toggle-billing">
+        <button class="btn-period btn-mensuel" onclick="setBilling('mensuel')">Mensuel</button>
+        <button class="btn-period btn-annuel active" onclick="setBilling('annuel')">Annuel</button>
+      </div>
+    </div>
+    <div class="sim-info">
+      Prix de vente = Prix achat × <span id="simFormula">1,40</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RECO BAR ═══ -->
+<div class="reco-bar">
+  <div class="reco-inner">
+    <div class="reco-left">
+      <span style="font-size:18px">🏢</span>
+      <span class="reco-label">Postes client</span>
+      <div class="reco-input-wrap">
+        <input type="number" id="recoPostes" class="reco-input" min="1" max="999" placeholder="ex: 10"
+          oninput="updateRecommendation(this.value)">
+        <span class="reco-unit">postes</span>
+      </div>
+    </div>
+    <div class="reco-result" id="recoResult">
+      <span class="reco-placeholder">Entrez un nombre de postes pour voir le pack recommandé</span>
+    </div>
+    <div class="telco-option">
+      <input type="checkbox" id="telcoCheck" class="telco-check" onchange="updateAll()">
+      <label class="telco-label" for="telcoCheck">+ Téléphonie</label>
+      <div class="telco-price-wrap">
+        <input type="number" id="telcoPrice" class="telco-price-input" value="7.00" min="0" step="0.5" oninput="updateAll()">
+        <span style="font-size:11px;color:var(--text-light);font-weight:600">€/poste</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<main>
+
+  <!-- PAGE 360 -->
+  <div id="page-360" class="tab-page active">
+    <div class="section-header">
+      <div class="section-title">Fairwai 360</div>
+      <div class="section-subtitle">Visio · Voice · Présentiel</div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-title">
+        Licence Partagée — Forfaits horaires
+        <span style="font-size:12px;font-weight:500;color:var(--text-light)">(nb d'utilisateurs illimité)</span>
+        <span class="table-title-badge">3 paliers + sur mesure</span>
+      </div>
+      <table id="table360">
+        <thead>
+          <tr>
+            <th>Palier</th>
+            <th>Prix d'achat</th>
+            <th>Client / poste</th>
+            <th>Prix client suggéré</th>
+            <th id="gainLabel360">Marge annuelle revendeur</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="note-box" style="margin:16px 28px 20px">
+        <span style="font-size:14px;flex-shrink:0">ℹ️</span>
+        <span>Possibilité de moduler le forfait à la hausse. Heures supplémentaires facturées au prix horaire du forfait.</span>
+      </div>
+    </div>
+    <div class="licence-cards" id="licenceExec"></div>
+    <div class="custom-offer">
+      <div class="custom-offer-text">
+        <h3>Besoin d'une offre sur mesure ?</h3>
+        <p>Au-delà de 500h, nos équipes construisent une offre personnalisée.</p>
+      </div>
+      <button class="btn-contact" onclick="window.location.href='mailto:contact@fairw.ai'">Contacter l'équipe</button>
+    </div>
+  </div>
+
+  <!-- PAGE VOICE -->
+  <div id="page-voice" class="tab-page">
+    <div class="section-header">
+      <div class="section-title">Fairwai Voice</div>
+      <div class="section-subtitle">Voice uniquement</div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-title">
+        Licence Partagée — Forfaits horaires
+        <span style="font-size:12px;font-weight:500;color:var(--text-light)">(nb d'utilisateurs illimité)</span>
+        <span class="table-title-badge">3 paliers + sur mesure</span>
+      </div>
+      <table id="tableVoice">
+        <thead>
+          <tr>
+            <th>Palier</th>
+            <th>Prix d'achat</th>
+            <th>Client / poste</th>
+            <th>Prix client suggéré</th>
+            <th id="gainLabelVoice">Marge annuelle revendeur</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="note-box" style="margin:16px 28px 20px">
+        <span style="font-size:14px;flex-shrink:0">ℹ️</span>
+        <span>Possibilité de moduler le forfait à la hausse. Heures supplémentaires facturées au prix horaire du forfait.</span>
+      </div>
+    </div>
+    <div class="licence-cards" id="licenceVoice"></div>
+    <div class="custom-offer">
+      <div class="custom-offer-text">
+        <h3>Besoin d'une offre sur mesure ?</h3>
+        <p>Au-delà de 500h, nos équipes construisent une offre personnalisée.</p>
+      </div>
+      <button class="btn-contact" onclick="window.location.href='mailto:contact@fairw.ai'">Contacter l'équipe</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══ FAB ═══ -->
+<button class="devis-fab" onclick="openDevis()">Générer un devis</button>
+
+<!-- ═══ MODAL DEVIS ═══ -->
+<div class="devis-overlay" id="devisOverlay" onclick="if(event.target===this)closeDevis()">
+  <div class="devis-modal">
+    <div class="devis-modal-header">
+      <div class="devis-modal-title">Générer un devis client</div>
+      <button class="devis-close" onclick="closeDevis()">✕</button>
+    </div>
+    <div class="devis-modal-body">
+
+      <!-- Gauche : formulaire -->
+      <div class="devis-form">
+
+        <!-- Logo upload -->
+        <div class="devis-section-title">Votre logo</div>
+        <div class="logo-upload-zone" onclick="document.getElementById('logoInput').click()">
+          <img id="logoPreview" src="" alt="" style="display:none">
+          <span class="logo-upload-text" id="logoText">Cliquez pour ajouter votre logo</span>
+          <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
+        </div>
+
+        <!-- Partenaire -->
+        <div class="dv-partie dv-partie--partenaire">
+          <div class="dv-partie-header"><span class="dv-partie-icon">🤝</span>Partenaire / Revendeur</div>
+          <div class="dv-partie-body">
+            <div class="devis-row">
+              <div class="devis-field"><label>Société</label><input type="text" id="dv-part-societe" oninput="updateDevisPreview()"></div>
+              <div class="devis-field"><label>Contact</label><input type="text" id="dv-part-contact" oninput="updateDevisPreview()"></div>
+            </div>
+            <div class="devis-row">
+              <div class="devis-field"><label>Email</label><input type="email" id="dv-part-email" oninput="updateDevisPreview()"></div>
+              <div class="devis-field"><label>Téléphone</label><input type="tel" id="dv-part-tel" oninput="updateDevisPreview()"></div>
+            </div>
+            <div class="devis-row">
+              <div class="devis-field"><label>Adresse</label><input type="text" id="dv-part-adresse" oninput="updateDevisPreview()"></div>
+              <div class="devis-field"><label>SIRET</label><input type="text" id="dv-part-siret" oninput="updateDevisPreview()"></div>
+            </div>
+            <div class="devis-row">
+              <div class="devis-field"><label>N° TVA</label><input type="text" id="dv-part-tva" oninput="updateDevisPreview()"></div>
+              <div class="devis-field"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Client -->
+        <div class="dv-partie dv-partie--client">
+          <div class="dv-partie-header"><span class="dv-partie-icon">🏢</span>Client</div>
+          <div class="dv-partie-body">
+            <div class="devis-row">
+              <div class="devis-field"><label>Société</label><input type="text" id="dv-cli-societe" oninput="updateDevisPreview()"></div>
+              <div class="devis-field"><label>Contact</label><input type="text" id="dv-cli-contact" oninput="updateDevisPreview()"></div>
+            </div>
+            <div class="devis-row">
+              <div class="devis-field"><label>Email</label><input type="email" id="dv-cli-email" oninput="updateDevisPreview()"></div>
+              <div class="devis-field"><label>Téléphone</label><input type="tel" id="dv-cli-tel" oninput="updateDevisPreview()"></div>
+            </div>
+            <div class="devis-row">
+              <div class="devis-field"><label>Adresse</label><input type="text" id="dv-cli-adresse" oninput="updateDevisPreview()"></div>
+              <div class="devis-field"><label>SIRET</label><input type="text" id="dv-cli-siret" oninput="updateDevisPreview()"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Infos devis -->
+        <div class="devis-section-title" style="margin-top:14px">Informations devis</div>
+        <div class="devis-row">
+          <div class="devis-field"><label>N° de devis</label><input type="text" id="dv-numero" oninput="updateDevisPreview()"></div>
+          <div class="devis-field"><label>Date</label><input type="date" id="dv-date" onchange="updateDevisPreview()"></div>
+        </div>
+        <div class="devis-row">
+          <div class="devis-field"><label>Remise (%)</label><input type="number" id="dv-remise" value="0" min="0" max="100" oninput="updateDevisPreview()"></div>
+          <div class="devis-field"><label>Engagement</label>
+            <select id="dv-engagement" onchange="updateDevisPreview()">
+              <option value="12">12 mois</option>
+              <option value="24">24 mois</option>
+              <option value="36">36 mois</option>
+              <option value="0">Sans engagement</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Facturation -->
+        <div class="devis-billing-row">
+          <span class="devis-billing-label">Facturation</span>
+          <div class="devis-billing-toggle">
+            <button class="dv-btn-billing active" id="dv-billing-annuel" onclick="setDevisBilling('annuel')">Annuel</button>
+            <button class="dv-btn-billing" id="dv-billing-mensuel" onclick="setDevisBilling('mensuel')">Mensuel</button>
+          </div>
+        </div>
+
+        <!-- Offres -->
+        <div class="devis-section-title">Offres</div>
+        <div class="devis-packs" id="devisPacks"></div>
+
+        <!-- Lignes personnalisées -->
+        <div class="devis-section-title" style="margin-top:14px">Lignes personnalisées</div>
+        <div class="dv-sm-header">
+          <span>Description</span><span style="text-align:center">Qté</span><span style="text-align:right">Prix HT</span><span>Unité</span><span></span>
+        </div>
+        <div id="devisSurMesure" class="dv-sm-container"></div>
+        <button class="dv-add-ligne" onclick="addLigneSM()">+ Ajouter une ligne</button>
+
+      </div>
+
+      <!-- Droite : aperçu -->
+      <div class="devis-preview-wrap">
+        <div class="devis-section-title">Aperçu du devis</div>
+        <div class="devis-preview" id="devisPreview"></div>
+        <div class="devis-actions" style="flex-direction:column;gap:8px">
+          <button class="btn-devis-pdf" onclick="sauvegarderDevis()" style="background:var(--green);padding:12px">💾 Sauvegarder dans mon portefeuille</button>
+          <div style="display:flex;gap:8px">
+            <button class="btn-devis-print" onclick="imprimerDevis()">🖨️ Imprimer</button>
+            <button class="btn-devis-pdf" onclick="imprimerDevis()">📄 Télécharger PDF</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HISTORY MODAL ═══ -->
+<div class="history-overlay" id="historyOverlay" onclick="if(event.target===this)closeHistory()">
+  <div class="history-modal">
+    <div class="history-modal-header">
+      <div class="history-modal-title">Mon espace commercial</div>
+      <button class="devis-close" onclick="closeHistory()">✕</button>
+    </div>
+    <!-- Dashboard KPI -->
+    <div class="history-dashboard" id="historyDashboard"></div>
+    <!-- Liste -->
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<div id="printDevis"></div>
+
+<footer>
+  <strong>fairw.ai</strong> — Espace Partenaires · Tarifs HT · Document confidentiel réservé aux partenaires agréés
+</footer>
+
+<!-- ═══════════ SCRIPT ═══════════ -->
+<script>
+// ══════════════════════════════════════════════════
+//  DATA (identique Thomas)
+// ══════════════════════════════════════════════════
+const data360 = [
+  { palier:'15 h', mensuelAchat:21, annuelAchat:18, hMensuel:1.40, hAnnuel:1.19, clientMensuel:29, clientAnnuel:24.90 },
+  { palier:'30 h', mensuelAchat:42, annuelAchat:35, hMensuel:1.40, hAnnuel:1.19, clientMensuel:59, clientAnnuel:49.90 },
+  { palier:'50 h', mensuelAchat:64, annuelAchat:55, hMensuel:1.28, hAnnuel:1.088, clientMensuel:89, clientAnnuel:75 },
+];
+const tiers360 = [
+  { label:'75 h',  min:51,  max:75,  mensuelAchat:89,     annuelAchat:75.65,  hMensuel:1.187, hAnnuel:1.009, clientHMensuel:1.6613, clientHAnnuel:1.4121 },
+  { label:'100 h', min:76,  max:100, mensuelAchat:119,    annuelAchat:101.15, hMensuel:1.190, hAnnuel:1.012, clientHMensuel:1.6660, clientHAnnuel:1.4161 },
+  { label:'200 h', min:101, max:200, mensuelAchat:233.33, annuelAchat:198.33, hMensuel:1.167, hAnnuel:0.992, clientHMensuel:1.6334, clientHAnnuel:1.3884 },
+  { label:'500 h', min:201, max:500, mensuelAchat:572.50, annuelAchat:486.63, hMensuel:1.145, hAnnuel:0.973, clientHMensuel:1.6030, clientHAnnuel:1.3626 },
+];
+const dataVoice = [
+  { palier:'15 h', mensuelAchat:10.50, annuelAchat:9,    hMensuel:0.700, hAnnuel:0.595, clientMensuel:14.50, clientAnnuel:12.45 },
+  { palier:'30 h', mensuelAchat:21,    annuelAchat:17.50, hMensuel:0.700, hAnnuel:0.595, clientMensuel:29.50, clientAnnuel:24.95 },
+  { palier:'50 h', mensuelAchat:32,    annuelAchat:27.50, hMensuel:0.640, hAnnuel:0.544, clientMensuel:44.50, clientAnnuel:37.50 },
+];
+const tiersVoice = [
+  { label:'75 h',  min:51,  max:75,  mensuelAchat:44.50,  annuelAchat:37.83,  hMensuel:0.593, hAnnuel:0.504, clientHMensuel:0.8307, clientHAnnuel:0.7061 },
+  { label:'100 h', min:76,  max:100, mensuelAchat:59.50,  annuelAchat:50.58,  hMensuel:0.595, hAnnuel:0.506, clientHMensuel:0.8330, clientHAnnuel:0.7081 },
+  { label:'200 h', min:101, max:200, mensuelAchat:116.67, annuelAchat:99.17,  hMensuel:0.583, hAnnuel:0.496, clientHMensuel:0.8167, clientHAnnuel:0.6942 },
+  { label:'500 h', min:201, max:500, mensuelAchat:286.25, annuelAchat:243.31, hMensuel:0.573, hAnnuel:0.487, clientHMensuel:0.8015, clientHAnnuel:0.6813 },
+];
+const licenceExec = {
+  name:'Licence Executive Illimitée <span style="font-size:12px;font-weight:500;color:var(--text-light)">(individuelle)</span>',
+  note:'Fair use 60h/mois inclus', mensuelAchat:35, annuelAchat:29.90, clientMensuel:49, clientAnnuel:39.90
+};
+const licenceVoiceInd = {
+  name:'Licence Individuelle Voice Illimitée',
+  note:'Fair use 40h/mois', mensuelAchat:17.50, annuelAchat:14.88, clientMensuel:24.90, clientAnnuel:19.90
+};
+
+// ══════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════
+let marginPct = 40;
+let billing = 'annuel';
+let currentPostes = null;
+let selectedPack = null; // {tableId, rowIndex, data}
+
+// ══════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════
+const fmt = v => v.toFixed(2).replace('.', ',') + ' €';
+const fmtN = v => v.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+
+// Prix de vente = prix d'achat × (1 + marge%)
+// Gain = prix de vente - prix d'achat
+// TOUT est calculé depuis le prix d'ACHAT, jamais depuis le prix client référence
+
+function getTelcoPerPoste() {
+  if (!document.getElementById('telcoCheck').checked) return 0;
+  return parseFloat(document.getElementById('telcoPrice').value) || 0;
+}
+
+// ══════════════════════════════════════════════════
+//  RENDER TABLE — new column order
+//  Palier | Prix achat | Client/poste | Prix client suggéré | Gain
+// ══════════════════════════════════════════════════
+function renderTable(tableId, data) {
+  const tiersMap = { table360: tiers360, tableVoice: tiersVoice };
+  const prefixMap = { table360:'Pack 360', tableVoice:'Pack Voice' };
+  const prefix = prefixMap[tableId];
+  const tbody = document.querySelector(`#${tableId} tbody`);
+  const existingInput = tbody.querySelector('.inline-hours-input');
+  const savedHours = existingInput ? existingInput.value : '';
+  tbody.innerHTML = '';
+
+  const isAnnual = billing === 'annuel';
+  const telco = getTelcoPerPoste();
+  const gainMultiplier = isAnnual ? 12 : 1;
+  const gainWord = isAnnual ? 'annuel' : 'mensuel';
+
+  data.forEach((row, idx) => {
+    const achat = isAnnual ? row.annuelAchat : row.mensuelAchat;
+    const packCap = Math.floor(parseInt(row.palier) / 3);
+    const postes = currentPostes || packCap;
+    // Prix de vente = prix d'achat × (1 + marge%)
+    const prixVente = achat * (1 + marginPct / 100);
+    const gainMensuel = prixVente - achat;
+    const gainTotal = gainMensuel * gainMultiplier;
+    // Client/poste = prix de vente pool / nb postes + téléphonie éventuelle
+    const iaParPoste = prixVente / postes;
+    const clientParPoste = iaParPoste + telco;
+
+    const tr = document.createElement('tr');
+    tr.dataset.tableId = tableId;
+    tr.dataset.rowIndex = idx;
+    tr.onclick = () => selectRow(tableId, idx);
+
+    tr.innerHTML = `
+      <td>
+        <span class="palier-badge">${prefix} ${row.palier.replace(' h','h')}</span>
+        <div style="font-size:11px;color:var(--text-light);margin-top:4px">≈ ${packCap} postes</div>
+      </td>
+      <td>
+        <div style="font-size:16px;font-weight:800;color:var(--black)">${fmt(achat)}</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:2px">/mois</div>
+      </td>
+      <td>
+        <div style="font-size:15px;font-weight:700;color:var(--green)">${fmt(clientParPoste)}</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:2px">${telco > 0 ? `IA ${fmt(iaParPoste)} + Tél. ${fmt(telco)}` : '/ poste / mois'}</div>
+      </td>
+      <td>
+        <div style="font-size:16px;font-weight:800;color:var(--green)">${fmt(prixVente)}</div>
+        ${telco > 0 && currentPostes ? `<div style="font-size:11px;color:var(--green);opacity:.7">+ tél. ${fmt(telco * postes)}/mois</div>` : `<div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>`}
+      </td>
+      <td>
+        <div style="font-size:16px;font-weight:800;color:var(--accent)">${fmt(gainTotal)}</div>
+        <div style="font-size:11px;color:var(--text-light)">${gainWord}</div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Inline calc row for >50h
+  const calcTr = document.createElement('tr');
+  calcTr.className = 'calc-inline-row';
+  calcTr.innerHTML = `
+    <td>
+      <div class="inline-hours-wrap">
+        <span class="inline-hours-label">Sur mesure</span>
+        <input type="number" class="inline-hours-input" placeholder="ex: 80" min="51" max="500"
+          value="${savedHours}" oninput="updateInlineCalc('${tableId}',this.value)">
+        <span style="font-size:11px;color:var(--text-light);font-weight:600">h</span>
+      </div>
+    </td>
+    <td class="ic-achat"><span class="ic-empty">—</span></td>
+    <td class="ic-client-poste"><span class="ic-empty">—</span></td>
+    <td class="ic-client"><span class="ic-empty">—</span></td>
+    <td class="ic-gain"><span class="ic-empty">—</span></td>
+  `;
+  tbody.appendChild(calcTr);
+  if (savedHours) updateInlineCalc(tableId, savedHours);
+}
+
+// ══════════════════════════════════════════════════
+//  INLINE CALC (>50h)
+// ══════════════════════════════════════════════════
+function updateInlineCalc(tableId, val) {
+  const tiersMap = { table360: tiers360, tableVoice: tiersVoice };
+  const tiersData = tiersMap[tableId];
+  const tbody = document.querySelector(`#${tableId} tbody`);
+  const row = tbody.querySelector('.calc-inline-row');
+  if (!row) return;
+
+  const hours = parseInt(val, 10);
+  const empty = s => `<span class="ic-empty">${s}</span>`;
+  const set = (cls, html) => { row.querySelector(cls).innerHTML = html; };
+  const allEmpty = () => ['.ic-achat','.ic-client-poste','.ic-client','.ic-gain'].forEach(c => set(c, empty('—')));
+
+  if (!val || isNaN(hours) || hours < 1) { allEmpty(); return; }
+  if (hours <= 50) { set('.ic-achat', empty('↑ forfait standard')); ['.ic-client-poste','.ic-client','.ic-gain'].forEach(c => set(c, empty('—'))); return; }
+  if (hours > 500) { set('.ic-achat', `<span style="font-size:12px;color:var(--text-light)">Sur devis > 500h</span>`); ['.ic-client-poste','.ic-client','.ic-gain'].forEach(c => set(c, empty('—'))); return; }
+
+  const tier = tiersData.find(t => hours >= t.min && hours <= t.max);
+  if (!tier) { allEmpty(); return; }
+
+  const isAnnual = billing === 'annuel';
+  const hRate = isAnnual ? tier.hAnnuel : tier.hMensuel;
+  const achat = hours * hRate;
+  const prixVente = achat * (1 + marginPct / 100);
+  const gainMensuel = prixVente - achat;
+  const postes = currentPostes || Math.ceil(hours / 3);
+  const telco = getTelcoPerPoste();
+  const iaParPoste = prixVente / postes;
+  const clientParPoste = iaParPoste + telco;
+  const gainMultiplier = isAnnual ? 12 : 1;
+  const gainTotal = gainMensuel * gainMultiplier;
+  const gainWord = isAnnual ? 'annuel' : 'mensuel';
+
+  set('.ic-achat', `<div style="font-size:16px;font-weight:800;color:var(--black)">${fmt(achat)}</div><div style="font-size:11px;color:var(--text-light)">${hours}h × ${fmt(hRate).replace(' €','€')}/h</div>`);
+  set('.ic-client-poste', `<div style="font-size:15px;font-weight:700;color:var(--green)">${fmt(clientParPoste)}</div><div style="font-size:11px;color:var(--text-light)">${telco > 0 ? `IA ${fmt(iaParPoste)} + Tél. ${fmt(telco)}` : '/ poste / mois'}</div>`);
+  set('.ic-client', `<div style="font-size:16px;font-weight:800;color:var(--green)">${fmt(prixVente)}</div><div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>`);
+  set('.ic-gain', `<div style="font-size:16px;font-weight:800;color:var(--accent)">${fmt(gainTotal)}</div><div style="font-size:11px;color:var(--text-light)">${gainWord}</div>`);
+}
+
+// ══════════════════════════════════════════════════
+//  ROW SELECTION (for devis pre-fill)
+// ══════════════════════════════════════════════════
+function selectRow(tableId, rowIndex) {
+  document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
+  const rows = Array.from(document.querySelectorAll(`#${tableId} tbody tr:not(.calc-inline-row)`));
+  if (rows[rowIndex]) {
+    rows[rowIndex].classList.add('row-selected');
+    const dataMap = { table360: data360, tableVoice: dataVoice };
+    selectedPack = { tableId, rowIndex, data: dataMap[tableId][rowIndex] };
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  LICENCE CARD
+// ══════════════════════════════════════════════════
+function renderLicenceCard(containerId, lic, cssClass) {
+  const container = document.getElementById(containerId);
+  const isAnnual = billing === 'annuel';
+  const achat = isAnnual ? lic.annuelAchat : lic.mensuelAchat;
+  const prixVente = achat * (1 + marginPct / 100);
+  const gainMensuel = prixVente - achat;
+  const gainMultiplier = isAnnual ? 12 : 1;
+  const gainWord = isAnnual ? 'annuel' : 'mensuel';
+
+  container.innerHTML = `
+    <div class="licence-card ${cssClass}">
+      <div class="licence-name">${lic.name}</div>
+      <div class="licence-note">${lic.note}</div>
+      <div class="licence-prices">
+        <div class="lp-block lp-block-achat">
+          <div class="lp-label">Prix d'achat</div>
+          <div class="lp-value" style="color:var(--black)">${fmt(achat)}</div>
+          <div class="lp-sub" style="color:var(--text-light)">/mois</div>
+        </div>
+        <div class="lp-block lp-block-client">
+          <div class="lp-label" style="color:var(--green)">Prix de vente</div>
+          <div class="lp-value" style="color:var(--green)">${fmt(prixVente)}</div>
+          <div class="lp-sub" style="color:var(--green)">+${marginPct}% /mois</div>
+        </div>
+        <div class="lp-block lp-block-sell">
+          <div class="lp-label" style="color:var(--accent-text)">Marge mensuelle revendeur</div>
+          <div class="lp-value" style="color:var(--accent)">${fmt(gainMensuel)}</div>
+          <div class="lp-sub" style="color:var(--accent)">/ mois</div>
+        </div>
+        <div class="lp-block lp-block-sell">
+          <div class="lp-label" style="color:var(--accent-text)">${gainWord}</div>
+          <div class="lp-value" style="color:var(--accent)">${fmt(gainMensuel * gainMultiplier)}</div>
+          <div class="lp-sub" style="color:var(--accent)">${isAnnual ? '× 12 mois' : ''}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════
+//  HIGHLIGHT + BADGE (no "×3h" calc shown)
+// ══════════════════════════════════════════════════
+function applyHighlightAndBadge() {
+  document.querySelectorAll('.row-recommended').forEach(r => r.classList.remove('row-recommended'));
+  const result = document.getElementById('recoResult');
+
+  if (!currentPostes || currentPostes < 1) {
+    result.innerHTML = '<span class="reco-placeholder">Entrez un nombre de postes pour voir le pack recommandé</span>';
+    return;
+  }
+
+  const heures = currentPostes * 3;
+  let rowIndex, packLabel, isSurMesure = false;
+
+  if (heures <= 15)      { rowIndex = 0; packLabel = '15h'; }
+  else if (heures <= 30) { rowIndex = 1; packLabel = '30h'; }
+  else if (heures <= 50) { rowIndex = 2; packLabel = '50h'; }
+  else                   { rowIndex = 3; isSurMesure = true; }
+
+  // Highlight recommended row on BOTH tables (but all rows remain visible)
+  ['table360','tableVoice'].forEach(tableId => {
+    const rows = Array.from(document.querySelectorAll(`#${tableId} tbody tr`));
+    if (rows[rowIndex]) rows[rowIndex].classList.add('row-recommended');
+  });
+
+  if (isSurMesure) {
+    document.querySelectorAll('.inline-hours-input').forEach(inp => {
+      inp.value = heures;
+      const tbl = inp.closest('table');
+      if (tbl) updateInlineCalc(tbl.id, heures);
+    });
+  }
+
+  const badgeHtml = isSurMesure
+    ? `<span class="reco-badge reco-badge-custom">Sur mesure — ${heures}h recommandé</span>`
+    : `<span class="reco-badge">Pack ${packLabel} recommandé</span>`;
+
+  result.innerHTML = badgeHtml;
+}
+
+function updateRecommendation(val) {
+  const p = parseInt(val, 10);
+  currentPostes = (p && p > 0) ? p : null;
+  renderTable('table360', data360);
+  renderTable('tableVoice', dataVoice);
+  applyHighlightAndBadge();
+}
+
+// ══════════════════════════════════════════════════
+//  UPDATE ALL
+// ══════════════════════════════════════════════════
+function updateAll() {
+  const mult = (1 + marginPct / 100).toFixed(2).replace('.', ',');
+  document.getElementById('simFormula').textContent = mult;
+
+  const isAnnual = billing === 'annuel';
+  const gainWord = isAnnual ? 'Marge annuelle revendeur' : 'Marge mensuelle revendeur';
+  document.getElementById('gainLabel360').textContent = gainWord;
+  document.getElementById('gainLabelVoice').textContent = gainWord;
+
+  renderTable('table360', data360);
+  renderTable('tableVoice', dataVoice);
+  renderLicenceCard('licenceExec', licenceExec, 'exec');
+  renderLicenceCard('licenceVoice', licenceVoiceInd, 'voice-ind');
+  applyHighlightAndBadge();
+}
+
+// ══════════════════════════════════════════════════
+//  EVENTS
+// ══════════════════════════════════════════════════
+document.getElementById('marginRange').addEventListener('input', e => {
+  marginPct = parseInt(e.target.value, 10);
+  document.getElementById('marginNum').value = marginPct;
+  updateAll();
+});
+document.getElementById('marginNum').addEventListener('input', e => {
+  let v = parseInt(e.target.value, 10);
+  if (isNaN(v)) return;
+  v = Math.max(0, Math.min(100, v));
+  marginPct = v;
+  document.getElementById('marginRange').value = v;
+  updateAll();
+});
+
+function setBilling(type) {
+  billing = type;
+  document.querySelectorAll('.btn-mensuel').forEach(b => b.classList.toggle('active', type === 'mensuel'));
+  document.querySelectorAll('.btn-annuel').forEach(b => b.classList.toggle('active', type === 'annuel'));
+  updateAll();
+}
+
+function switchTab(tab) {
+  document.getElementById('page-360').classList.toggle('active', tab === '360');
+  document.getElementById('page-voice').classList.toggle('active', tab === 'voice');
+  document.getElementById('tab360').classList.toggle('active', tab === '360');
+  document.getElementById('tabVoice').classList.toggle('active', tab === 'voice');
+}
+
+// Sticky positions
+function updateStickyTops() {
+  const h1 = document.querySelector('header').offsetHeight;
+  const h2 = document.querySelector('.tab-nav').offsetHeight;
+  const h3 = document.querySelector('.sim-bar').offsetHeight;
+  document.querySelector('.tab-nav').style.top = h1 + 'px';
+  document.querySelector('.sim-bar').style.top = (h1 + h2) + 'px';
+  document.querySelector('.reco-bar').style.top = (h1 + h2 + h3) + 'px';
+}
+
+// ══════════════════════════════════════════════════
+//  PORTFOLIO & HISTORY (localStorage)
+// ══════════════════════════════════════════════════
+const STORAGE_KEY = 'fairwai_simulations';
+const PROFILE_KEY = 'fairwai_profile';
+
+function loadSimulations() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+}
+function saveSimulations(sims) { localStorage.setItem(STORAGE_KEY, JSON.stringify(sims)); }
+
+function loadProfile() {
+  try { return JSON.parse(localStorage.getItem(PROFILE_KEY)) || {}; } catch { return {}; }
+}
+function saveProfile(p) { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); }
+
+function updatePortfolio() {
+  const sims = loadSimulations();
+  let totalCA = 0, totalGain = 0;
+  // Ne compter que les simulations actives (en cours + signées), pas les perdues
+  sims.forEach(s => {
+    if (s.status !== 'perdu') {
+      totalCA += s.ca || 0;
+      totalGain += s.gain || 0;
+    }
+  });
+  document.getElementById('portfolioCA').textContent = fmtN(totalCA);
+  document.getElementById('portfolioGain').textContent = fmtN(totalGain);
+
+  const profile = loadProfile();
+  document.getElementById('espaceName').textContent = profile.name || 'Mon espace';
+}
+
+let historyFilter = 'all'; // all, en-cours, signe, perdu
+
+function openHistory(filter) {
+  if (filter) historyFilter = filter;
+  const sims = loadSimulations();
+  const dashboard = document.getElementById('historyDashboard');
+  const list = document.getElementById('historyList');
+
+  // ── KPI Dashboard ──
+  const nbTotal = sims.length;
+  const nbEnCours = sims.filter(s => (s.status || 'en-cours') === 'en-cours').length;
+  const nbSigne = sims.filter(s => s.status === 'signe').length;
+  const nbPerdu = sims.filter(s => s.status === 'perdu').length;
+  const txConversion = nbTotal > 0 ? Math.round((nbSigne / nbTotal) * 100) : 0;
+  const caActif = sims.filter(s => s.status !== 'perdu').reduce((t, s) => t + (s.ca || 0), 0);
+  const caSigne = sims.filter(s => s.status === 'signe').reduce((t, s) => t + (s.ca || 0), 0);
+  const licencesTotal = sims.filter(s => s.status !== 'perdu').reduce((t, s) => t + (parseInt(s.postes) || 0), 0);
+
+  // Raisons de perte agrégées
+  const lostReasons = {};
+  sims.filter(s => s.status === 'perdu' && s.lostReason).forEach(s => {
+    const r = s.lostReason.trim();
+    if (r) lostReasons[r] = (lostReasons[r] || 0) + 1;
+  });
+  const sortedReasons = Object.entries(lostReasons).sort((a, b) => b[1] - a[1]);
+
+  dashboard.innerHTML = nbTotal === 0 ? '' : `
+    <div class="history-kpi-row">
+      <div class="history-kpi">
+        <div class="history-kpi-num blue">${nbTotal}</div>
+        <div class="history-kpi-label">Offres totales</div>
+      </div>
+      <div class="history-kpi">
+        <div class="history-kpi-num gold">${nbEnCours}</div>
+        <div class="history-kpi-label">En cours</div>
+      </div>
+      <div class="history-kpi">
+        <div class="history-kpi-num green">${nbSigne}</div>
+        <div class="history-kpi-label">Signées</div>
+      </div>
+      <div class="history-kpi">
+        <div class="history-kpi-num red">${nbPerdu}</div>
+        <div class="history-kpi-label">Perdues</div>
+      </div>
+      <div class="history-kpi">
+        <div class="history-kpi-num green">${txConversion}%</div>
+        <div class="history-kpi-label">Taux conversion</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="history-kpi" style="border-color:var(--accent)">
+        <div class="history-kpi-num blue">${fmtN(caActif)}</div>
+        <div class="history-kpi-label">CA potentiel annuel</div>
+      </div>
+      <div class="history-kpi" style="border-color:var(--green)">
+        <div class="history-kpi-num green">${fmtN(caSigne)}</div>
+        <div class="history-kpi-label">CA signé annuel</div>
+      </div>
+      <div class="history-kpi">
+        <div class="history-kpi-num blue">${licencesTotal}</div>
+        <div class="history-kpi-label">Licences simulées</div>
+      </div>
+    </div>
+
+    ${sortedReasons.length > 0 ? `
+      <div class="lost-reasons-summary">
+        <div class="lost-reasons-title">Raisons de perte</div>
+        ${sortedReasons.map(([reason, count]) => `
+          <div class="lost-reason-bar">
+            <span class="lost-reason-text">${reason}</span>
+            <span class="lost-reason-count">${count}×</span>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    <div class="history-filters">
+      <button class="history-filter-btn ${historyFilter === 'all' ? 'active' : ''}" onclick="openHistory('all')">Toutes (${nbTotal})</button>
+      <button class="history-filter-btn ${historyFilter === 'en-cours' ? 'active' : ''}" onclick="openHistory('en-cours')">En cours (${nbEnCours})</button>
+      <button class="history-filter-btn ${historyFilter === 'signe' ? 'active' : ''}" onclick="openHistory('signe')">Signées (${nbSigne})</button>
+      <button class="history-filter-btn ${historyFilter === 'perdu' ? 'active' : ''}" onclick="openHistory('perdu')">Perdues (${nbPerdu})</button>
+    </div>
+  `;
+
+  // ── Liste filtrée ──
+  const filtered = historyFilter === 'all'
+    ? sims
+    : sims.filter(s => (s.status || 'en-cours') === historyFilter);
+
+  if (filtered.length === 0 && nbTotal === 0) {
+    list.innerHTML = '<div class="history-empty">Aucune simulation sauvegardée.<br>Générez un devis pour l\'ajouter ici.</div>';
+  } else if (filtered.length === 0) {
+    list.innerHTML = '<div class="history-empty">Aucune simulation avec ce filtre.</div>';
+  } else {
+    list.innerHTML = filtered.map((s) => {
+      const realIdx = sims.indexOf(s); // index réel pour les actions
+      const status = s.status || 'en-cours';
+      const statusLabels = { 'en-cours': '⏳ En cours', 'signe': '✅ Signé', 'perdu': '❌ Perdu' };
+
+      return `
+      <div class="history-item" style="flex-wrap:wrap">
+        <div class="history-item-info" style="min-width:200px">
+          <div class="history-item-title">${s.client || 'Sans nom'} — ${s.pack || ''}</div>
+          <div class="history-item-sub">Devis ${s.numero || '—'} · ${s.date || '—'} · ${s.postes || '?'} postes</div>
+          ${status === 'perdu' && s.lostReason ? `<div class="lost-reason">Raison : ${s.lostReason}</div>` : ''}
+        </div>
+        <div class="history-item-amount" style="min-width:100px">
+          <div class="history-item-ca" ${status === 'perdu' ? 'style="text-decoration:line-through;opacity:.5"' : ''}>CA ${fmtN(s.ca || 0)}</div>
+          <div class="history-item-gain" ${status === 'perdu' ? 'style="text-decoration:line-through;opacity:.5"' : ''}>Marge ${fmtN(s.gain || 0)}</div>
+        </div>
+        <div class="status-dropdown">
+          <span class="status-badge ${status}" onclick="toggleStatusMenu(${realIdx}, event)">${statusLabels[status]}</span>
+          <div class="status-menu" id="status-menu-${realIdx}">
+            <div class="status-menu-item" onclick="setSimStatus(${realIdx}, 'en-cours')"><span class="status-dot en-cours"></span>En cours</div>
+            <div class="status-menu-item" onclick="setSimStatus(${realIdx}, 'signe')"><span class="status-dot signe"></span>Signé</div>
+            <div class="status-menu-item" onclick="promptLostReason(${realIdx})"><span class="status-dot perdu"></span>Perdu…</div>
+          </div>
+        </div>
+        <div class="history-actions">
+          <button class="btn-history-more" onclick="toggleActionsMenu(${realIdx}, event)" title="Actions">⋯</button>
+          <div class="actions-menu" id="actions-menu-${realIdx}">
+            <div class="actions-menu-item" onclick="editSimulation(${realIdx})">✏️ Modifier</div>
+            <div class="actions-menu-item" onclick="duplicateSimulation(${realIdx})">📋 Dupliquer</div>
+            <div class="actions-menu-item danger" onclick="deleteSimulation(${realIdx})">🗑️ Supprimer</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('historyOverlay').classList.add('open');
+}
+
+function closeHistory() { document.getElementById('historyOverlay').classList.remove('open'); }
+
+// ── Fermer tous les menus ouverts ──
+function closeAllMenus() {
+  document.querySelectorAll('.status-menu.open, .actions-menu.open').forEach(m => m.classList.remove('open'));
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.status-dropdown') && !e.target.closest('.history-actions')) closeAllMenus();
+});
+
+// ── Toggle menus ──
+function toggleStatusMenu(idx, e) {
+  e.stopPropagation();
+  const menu = document.getElementById(`status-menu-${idx}`);
+  const wasOpen = menu.classList.contains('open');
+  closeAllMenus();
+  if (!wasOpen) menu.classList.add('open');
+}
+
+function toggleActionsMenu(idx, e) {
+  e.stopPropagation();
+  const menu = document.getElementById(`actions-menu-${idx}`);
+  const wasOpen = menu.classList.contains('open');
+  closeAllMenus();
+  if (!wasOpen) menu.classList.add('open');
+}
+
+// ── Changer le statut ──
+function setSimStatus(idx, status, reason) {
+  const sims = loadSimulations();
+  sims[idx].status = status;
+  if (status === 'perdu' && reason) sims[idx].lostReason = reason;
+  if (status !== 'perdu') delete sims[idx].lostReason;
+  saveSimulations(sims);
+  updatePortfolio();
+  openHistory();
+}
+
+function promptLostReason(idx) {
+  closeAllMenus();
+  const reason = prompt('Raison de la perte (facultatif) :');
+  setSimStatus(idx, 'perdu', reason || '');
+}
+
+// ── Supprimer ──
+function deleteSimulation(idx) {
+  if (!confirm('Supprimer cette simulation ?')) return;
+  const sims = loadSimulations();
+  sims.splice(idx, 1);
+  saveSimulations(sims);
+  updatePortfolio();
+  openHistory();
+}
+
+// ── Dupliquer ──
+function duplicateSimulation(idx) {
+  const sims = loadSimulations();
+  const copy = JSON.parse(JSON.stringify(sims[idx]));
+  copy.id = Date.now();
+  copy.numero = copy.numero + '-copie';
+  copy.status = 'en-cours';
+  delete copy.lostReason;
+  sims.push(copy);
+  saveSimulations(sims);
+  updatePortfolio();
+  openHistory();
+}
+
+// ── Modifier (recharger dans le devis) ──
+function editSimulation(idx) {
+  const sims = loadSimulations();
+  const sim = sims[idx];
+
+  // Fermer l'historique, ouvrir le devis
+  closeHistory();
+
+  // Remplir le formulaire client
+  document.getElementById('dv-cli-societe').value = sim.client || '';
+  document.getElementById('dv-numero').value = sim.numero || '';
+  if (sim.date) document.getElementById('dv-date').value = sim.date;
+
+  // Stocker l'index pour mettre à jour au lieu d'ajouter
+  window._editingSimIdx = idx;
+
+  openDevis();
+}
+
+// ══════════════════════════════════════════════════
+//  DEVIS MODULE
+// ══════════════════════════════════════════════════
+let devisCounter = 1;
+let devisBilling = 'annuel';
+let dvSmId = 0;
+let revendeurLogo = null;
+
+function handleLogoUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    revendeurLogo = ev.target.result;
+    document.getElementById('logoPreview').src = revendeurLogo;
+    document.getElementById('logoPreview').style.display = 'block';
+    document.getElementById('logoText').textContent = file.name;
+    // Save logo in profile
+    const profile = loadProfile();
+    profile.logo = revendeurLogo;
+    saveProfile(profile);
+    updateDevisPreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function openDevis() {
+  document.getElementById('devisOverlay').classList.add('open');
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+
+  // Auto-fill date + numero
+  if (!document.getElementById('dv-date').value)
+    document.getElementById('dv-date').value = `${yyyy}-${mm}-${dd}`;
+
+  // Load devis counter from storage
+  const sims = loadSimulations();
+  devisCounter = sims.length + 1;
+  if (!document.getElementById('dv-numero').value)
+    document.getElementById('dv-numero').value = `DV-${yyyy}${mm}-${String(devisCounter).padStart(3,'0')}`;
+
+  // Auto-fill partenaire from profile
+  const profile = loadProfile();
+  if (profile.societe) document.getElementById('dv-part-societe').value = profile.societe;
+  if (profile.contact) document.getElementById('dv-part-contact').value = profile.contact;
+  if (profile.email) document.getElementById('dv-part-email').value = profile.email;
+  if (profile.tel) document.getElementById('dv-part-tel').value = profile.tel;
+  if (profile.adresse) document.getElementById('dv-part-adresse').value = profile.adresse;
+  if (profile.siret) document.getElementById('dv-part-siret').value = profile.siret;
+  if (profile.tva) document.getElementById('dv-part-tva').value = profile.tva;
+  if (profile.logo) {
+    revendeurLogo = profile.logo;
+    document.getElementById('logoPreview').src = revendeurLogo;
+    document.getElementById('logoPreview').style.display = 'block';
+    document.getElementById('logoText').textContent = 'Logo chargé';
+  }
+
+  // Sync billing
+  devisBilling = billing;
+  document.getElementById('dv-billing-annuel').classList.toggle('active', devisBilling === 'annuel');
+  document.getElementById('dv-billing-mensuel').classList.toggle('active', devisBilling === 'mensuel');
+
+  buildDevisPacks();
+  updateDevisPreview();
+}
+
+function closeDevis() {
+  document.getElementById('devisOverlay').classList.remove('open');
+  window._editingSimIdx = undefined; // Reset mode édition
+  // Save partenaire info to profile
+  const profile = loadProfile();
+  profile.societe = document.getElementById('dv-part-societe').value.trim();
+  profile.contact = document.getElementById('dv-part-contact').value.trim();
+  profile.email = document.getElementById('dv-part-email').value.trim();
+  profile.tel = document.getElementById('dv-part-tel').value.trim();
+  profile.adresse = document.getElementById('dv-part-adresse').value.trim();
+  profile.siret = document.getElementById('dv-part-siret').value.trim();
+  profile.tva = document.getElementById('dv-part-tva').value.trim();
+  profile.name = profile.contact || profile.societe || 'Mon espace';
+  saveProfile(profile);
+  updatePortfolio();
+}
+
+function setDevisBilling(type) {
+  const saved = {};
+  document.querySelectorAll('.devis-pack-item').forEach(item => {
+    const cb = item.querySelector('input[type=checkbox]');
+    if (cb && cb.checked) {
+      const qty = item.querySelector('.dv-qty');
+      saved[item.dataset.packId] = qty ? (parseInt(qty.value) || 1) : 1;
+    }
+  });
+  devisBilling = type;
+  document.getElementById('dv-billing-annuel').classList.toggle('active', type === 'annuel');
+  document.getElementById('dv-billing-mensuel').classList.toggle('active', type === 'mensuel');
+  buildDevisPacks();
+  Object.entries(saved).forEach(([packId, qty]) => {
+    const item = document.querySelector(`.devis-pack-item[data-pack-id="${packId}"]`);
+    if (!item) return;
+    const cb = item.querySelector('input[type=checkbox]');
+    if (cb) { cb.checked = true; item.classList.add('selected'); }
+    const wrap = item.querySelector('.dv-qty-wrap');
+    const input = item.querySelector('.dv-qty');
+    if (wrap) wrap.classList.add('visible');
+    if (input) input.value = qty;
+  });
+  updateDevisPreview();
+}
+
+function buildDevisPacks() {
+  const container = document.getElementById('devisPacks');
+  container.innerHTML = '';
+  const isAnnualBilling = devisBilling === 'annuel';
+  const bl = isAnnualBilling ? '/an' : '/mois';
+  // type: 'pool' = licence partagée (qté=1), 'unit' = par poste (qté=nb postes)
+  function makeItem(id, label, prixMensuel, type = 'pool') {
+    const prixDevis = isAnnualBilling ? prixMensuel * 12 : prixMensuel;
+    const div = document.createElement('div');
+    div.className = 'devis-pack-item';
+    div.dataset.packId = id;
+    div.dataset.prix = prixDevis;
+    div.dataset.label = label;
+    div.dataset.unite = bl;
+    div.dataset.type = type;
+    const defaultQty = type === 'unit' ? (currentPostes || 1) : 1;
+    const qtyLabel = type === 'unit' ? 'postes' : 'licence(s)';
+    div.innerHTML = `
+      <input type="checkbox" id="${id}" onchange="toggleDevisPack(this)">
+      <label class="devis-pack-label" for="${id}">${label}</label>
+      <span class="dv-qty-wrap" id="dv-qw-${id}">
+        <input type="number" class="dv-qty" value="${defaultQty}" min="1" max="999" oninput="updateDevisPreview()" title="Quantité">
+        <span style="font-size:10px;color:var(--text-light);font-weight:700">× <span style="font-size:9px">${qtyLabel}</span></span>
+      </span>
+      <span class="devis-pack-price">${fmt(prixDevis)}<span style="font-size:11px;font-weight:500;color:var(--text-light)"> ${bl}</span></span>
+    `;
+    return div;
+  }
+
+  function addHeader(txt) {
+    const h = document.createElement('div');
+    h.style.cssText = 'font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;margin:10px 0 4px';
+    h.textContent = txt;
+    container.appendChild(h);
+  }
+
+  addHeader('Fairwai 360 — Forfaits');
+  data360.forEach(row => {
+    const achat = devisBilling === 'annuel' ? row.annuelAchat : row.mensuelAchat;
+    container.appendChild(makeItem(`pack-360-${row.palier}`, `Pack 360 ${row.palier}`, achat * (1 + marginPct / 100)));
+  });
+
+  addHeader('Fairwai Voice — Forfaits');
+  dataVoice.forEach(row => {
+    const achat = devisBilling === 'annuel' ? row.annuelAchat : row.mensuelAchat;
+    container.appendChild(makeItem(`pack-voice-${row.palier}`, `Pack Voice ${row.palier}`, achat * (1 + marginPct / 100)));
+  });
+
+  // Telephony option — prix par poste, quantité = nb postes
+  const telco = getTelcoPerPoste();
+  if (telco > 0) {
+    addHeader('Option Téléphonie');
+    container.appendChild(makeItem('pack-telephonie', `Téléphonie (${fmt(telco)}/poste)`, telco, 'unit'));
+  }
+
+  // Licences individuelles — prix par poste, quantité = nb postes
+  addHeader('Licences individuelles');
+  const achatExec = devisBilling === 'annuel' ? licenceExec.annuelAchat : licenceExec.mensuelAchat;
+  const achatVoiceInd = devisBilling === 'annuel' ? licenceVoiceInd.annuelAchat : licenceVoiceInd.mensuelAchat;
+  container.appendChild(makeItem('pack-exec', 'Licence Executive Illimitée (individuelle)', achatExec * (1 + marginPct / 100), 'unit'));
+  container.appendChild(makeItem('pack-voice-ind', 'Licence Voice Individuelle Illimitée', achatVoiceInd * (1 + marginPct / 100), 'unit'));
+
+  // Auto-select pack from simulator
+  if (selectedPack) {
+    const prefix = selectedPack.tableId === 'table360' ? 'Pack 360' : 'Pack Voice';
+    const palier = selectedPack.data.palier;
+    const targetId = selectedPack.tableId === 'table360' ? `pack-360-${palier}` : `pack-voice-${palier}`;
+    const item = document.querySelector(`.devis-pack-item[data-pack-id="${targetId}"]`);
+    if (item) {
+      const cb = item.querySelector('input[type=checkbox]');
+      if (cb) { cb.checked = true; item.classList.add('selected'); }
+      const wrap = item.querySelector('.dv-qty-wrap');
+      if (wrap) wrap.classList.add('visible');
+    }
+  }
+}
+
+function toggleDevisPack(checkbox) {
+  const item = checkbox.closest('.devis-pack-item');
+  item.classList.toggle('selected', checkbox.checked);
+  const wrap = item.querySelector('.dv-qty-wrap');
+  if (wrap) wrap.classList.toggle('visible', checkbox.checked);
+  updateDevisPreview();
+}
+
+function addLigneSM() {
+  dvSmId++;
+  const div = document.createElement('div');
+  div.className = 'dv-ligne-sm';
+  div.id = `dv-sm-${dvSmId}`;
+  div.innerHTML = `
+    <input type="text" class="dv-sm-desc" placeholder="Description" oninput="updateDevisPreview()">
+    <input type="number" class="dv-sm-qty" value="1" min="1" oninput="updateDevisPreview()">
+    <input type="number" class="dv-sm-prix" placeholder="0,00" step="0.01" oninput="updateDevisPreview()">
+    <input type="text" class="dv-sm-unite" value="/mois" oninput="updateDevisPreview()">
+    <button class="dv-sm-remove" onclick="this.closest('.dv-ligne-sm').remove();updateDevisPreview()" title="Supprimer">×</button>
+  `;
+  document.getElementById('devisSurMesure').appendChild(div);
+  div.querySelector('.dv-sm-desc').focus();
+  updateDevisPreview();
+}
+
+// ══════════════════════════════════════════════════
+//  DEVIS PREVIEW (with TVA, TTC, validity, signature)
+// ══════════════════════════════════════════════════
+function updateDevisPreview() {
+  const g = id => (document.getElementById(id)?.value.trim() || '');
+  const TVA_RATE = 0.20;
+
+  const partSociete = g('dv-part-societe') || '—';
+  const partContact = g('dv-part-contact');
+  const partEmail = g('dv-part-email');
+  const partTel = g('dv-part-tel');
+  const partAdresse = g('dv-part-adresse');
+  const partSiret = g('dv-part-siret');
+  const partTva = g('dv-part-tva');
+  const cliSociete = g('dv-cli-societe') || '—';
+  const cliContact = g('dv-cli-contact');
+  const cliEmail = g('dv-cli-email');
+  const cliTel = g('dv-cli-tel');
+  const cliAdresse = g('dv-cli-adresse');
+  const cliSiret = g('dv-cli-siret');
+  const numero = g('dv-numero') || '—';
+  const dateRaw = g('dv-date');
+  const remise = parseFloat(document.getElementById('dv-remise')?.value) || 0;
+  const engagement = g('dv-engagement');
+
+  let dateLabel = '—';
+  let validiteLabel = '—';
+  if (dateRaw) {
+    const [y,m,d] = dateRaw.split('-');
+    dateLabel = `${d}/${m}/${y}`;
+    const dObj = new Date(dateRaw);
+    dObj.setDate(dObj.getDate() + 15);
+    validiteLabel = `${String(dObj.getDate()).padStart(2,'0')}/${String(dObj.getMonth()+1).padStart(2,'0')}/${dObj.getFullYear()}`;
+  }
+
+  // Collect lines
+  const lignes = [];
+  document.querySelectorAll('.devis-pack-item.selected').forEach(item => {
+    const prix = parseFloat(item.dataset.prix) || 0;
+    const label = item.dataset.label;
+    const unite = item.dataset.unite;
+    const qty = parseInt(item.querySelector('.dv-qty')?.value) || 1;
+    lignes.push({ label, qty, prixUnit: prix, total: prix * qty, unite });
+  });
+  document.querySelectorAll('.dv-ligne-sm').forEach(line => {
+    const desc = line.querySelector('.dv-sm-desc')?.value.trim() || '';
+    const qty = parseFloat(line.querySelector('.dv-sm-qty')?.value) || 1;
+    const prix = parseFloat(line.querySelector('.dv-sm-prix')?.value) || 0;
+    const unite = line.querySelector('.dv-sm-unite')?.value.trim() || '/mois';
+    if (desc || prix > 0) lignes.push({ label: desc || '—', qty, prixUnit: prix, total: prix * qty, unite, sm: true });
+  });
+
+  const totalBrutHT = lignes.reduce((s,l) => s + l.total, 0);
+  const totalNetHT = totalBrutHT * (1 - remise / 100);
+  const totalTVA = totalNetHT * TVA_RATE;
+  const totalTTC = totalNetHT + totalTVA;
+  const periodeLabel = devisBilling === 'annuel' ? 'annuel' : 'mensuel';
+  const billingLabel = devisBilling === 'annuel' ? 'Facturation annuelle' : 'Facturation mensuelle';
+  const engagementLabel = engagement && engagement !== '0' ? `Engagement ${engagement} mois` : 'Sans engagement';
+  const logoHtml = revendeurLogo ? `<img src="${revendeurLogo}" style="max-height:45px;max-width:140px;border-radius:6px" alt="logo">` : '';
+
+  const infoBlock = (titre, societe, contact, email, tel, adresse, siret) => `
+    <div style="background:#F7F5F1;border-radius:8px;padding:11px 13px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:5px">${titre}</div>
+      <div style="font-weight:700;color:#1A1A1A;font-size:13px">${societe}</div>
+      ${contact ? `<div style="color:#4A4A4A;font-size:12px">${contact}</div>` : ''}
+      ${adresse ? `<div style="color:#4A4A4A;font-size:11px;margin-top:2px">${adresse}</div>` : ''}
+      ${email ? `<div style="color:#4A4A4A;font-size:11px;margin-top:2px">${email}</div>` : ''}
+      ${tel ? `<div style="color:#4A4A4A;font-size:11px">${tel}</div>` : ''}
+      ${siret ? `<div style="color:#888;font-size:11px;margin-top:2px">SIRET : ${siret}</div>` : ''}
+    </div>`;
+
+  const html = `
+    <div style="font-family:'Inter',sans-serif;color:#1A1A1A;font-size:13px;line-height:1.6">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:13px;border-bottom:2px solid #3452FF">
+        <div>${logoHtml || `<div style="font-size:20px;font-weight:800;color:#3452FF;letter-spacing:-.5px">fairw.ai</div>`}
+        <div style="font-size:11px;color:#888;margin-top:1px">Espace Partenaires</div></div>
+        <div style="text-align:right">
+          <div style="font-size:16px;font-weight:800;color:#1A1A1A">DEVIS ${numero}</div>
+          <div style="font-size:12px;color:#4A4A4A;margin-top:2px">Date : ${dateLabel}</div>
+          <div style="font-size:11px;color:#C97B0A;font-weight:700;margin-top:2px">Validité : ${validiteLabel} (15 jours)</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        ${infoBlock('Émetteur', partSociete, partContact, partEmail, partTel, partAdresse, partSiret)}
+        ${infoBlock('Client', cliSociete, cliContact, cliEmail, cliTel, cliAdresse, cliSiret)}
+      </div>
+
+      <div style="display:flex;gap:16px;font-size:11px;font-weight:600;margin-bottom:10px">
+        <span style="color:#3452FF">${billingLabel}</span>
+        <span style="color:#4A4A4A">${engagementLabel}</span>
+        ${remise > 0 ? `<span style="color:#C97B0A">Remise : ${remise}%</span>` : ''}
+      </div>
+
+      ${lignes.length === 0
+        ? `<div style="text-align:center;padding:22px;color:#888;font-size:13px;border:1.5px dashed #DDD;border-radius:8px">Sélectionnez des offres ou ajoutez des lignes</div>`
+        : `<table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="background:#EEF0FF">
+                <th style="text-align:left;padding:7px 9px;font-weight:700;border-radius:6px 0 0 6px">Désignation</th>
+                <th style="text-align:center;padding:7px 5px;font-weight:700">Qté</th>
+                <th style="text-align:right;padding:7px 8px;font-weight:700">P.U. HT</th>
+                <th style="text-align:right;padding:7px 9px;font-weight:700;border-radius:0 6px 6px 0">Total HT</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${lignes.map((l,i) => `
+                <tr style="border-bottom:1px solid #E8E4DE;background:${i%2===0?'#fff':'#FAFAF8'}">
+                  <td style="padding:8px 9px;font-weight:600">${l.label}<span style="font-size:10px;color:#888;font-weight:400"> ${l.unite}</span></td>
+                  <td style="padding:8px 5px;text-align:center;color:#4A4A4A">${l.qty}</td>
+                  <td style="padding:8px 8px;text-align:right;color:#4A4A4A">${fmt(l.prixUnit)}</td>
+                  <td style="padding:8px 9px;text-align:right;font-weight:700">${fmt(l.total)}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+
+          <div style="margin-top:12px;border-top:2px solid #DDD;padding-top:10px">
+            <table style="width:100%;font-size:12px;border-collapse:collapse">
+              ${remise > 0 ? `
+                <tr><td style="padding:4px 9px;color:#888">Total brut ${periodeLabel} HT</td><td style="text-align:right;padding:4px 9px;color:#888;text-decoration:line-through">${fmt(totalBrutHT)}</td></tr>
+                <tr><td style="padding:4px 9px;color:#C97B0A;font-weight:600">Remise ${remise}%</td><td style="text-align:right;padding:4px 9px;color:#C97B0A;font-weight:600">-${fmt(totalBrutHT - totalNetHT)}</td></tr>
+              ` : ''}
+              <tr style="font-weight:800"><td style="padding:6px 9px">Total ${periodeLabel} HT</td><td style="text-align:right;padding:6px 9px">${fmt(totalNetHT)}</td></tr>
+              <tr><td style="padding:4px 9px;color:#888">TVA (20%)</td><td style="text-align:right;padding:4px 9px;color:#888">${fmt(totalTVA)}</td></tr>
+              <tr style="font-weight:800;font-size:14px;color:#3452FF"><td style="padding:8px 9px;border-top:2px solid #3452FF">Total ${periodeLabel} TTC</td><td style="text-align:right;padding:8px 9px;border-top:2px solid #3452FF">${fmt(totalTTC)}</td></tr>
+              ${devisBilling === 'annuel' ? `<tr style="color:#888;font-size:11px"><td style="padding:4px 9px">Soit ${fmt(totalTTC / 12)} TTC / mois</td><td></td></tr>` : ''}
+            </table>
+          </div>`}
+
+      <div style="margin-top:24px;padding:16px;border:1.5px solid #DDD;border-radius:10px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:12px">Bon pour accord</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div style="font-size:11px;color:#888;margin-bottom:6px">Date et signature du client :</div>
+            <div style="border-bottom:1px solid #DDD;height:50px"></div>
+            <div style="font-size:10px;color:#888;margin-top:4px">Lu et approuvé, bon pour accord</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#888;margin-bottom:6px">Cachet de l'entreprise :</div>
+            <div style="border:1px dashed #DDD;height:50px;border-radius:6px"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding-top:10px;border-top:1px solid #E8E4DE;font-size:10px;color:#888">
+        Tarifs en euros HT · TVA 20% · Validité du devis : 15 jours à compter de la date d'émission · ${engagementLabel}
+      </div>
+    </div>`;
+
+  document.getElementById('devisPreview').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════
+//  PRINT / SAVE
+// ══════════════════════════════════════════════════
+function imprimerDevis() {
+  document.getElementById('printDevis').innerHTML = `
+    <div style="max-width:720px;margin:30px auto;padding:30px;font-family:'Inter',sans-serif">
+      ${document.getElementById('devisPreview').innerHTML}
+    </div>`;
+  window.print();
+}
+
+function sauvegarderDevis() {
+  // Collecter les lignes sélectionnées
+  const lignes = [];
+  let totalMensuelHT = 0;
+  document.querySelectorAll('.devis-pack-item.selected').forEach(item => {
+    const prix = parseFloat(item.dataset.prix) || 0;
+    const qty = parseInt(item.querySelector('.dv-qty')?.value) || 1;
+    totalMensuelHT += prix * qty;
+    lignes.push(item.dataset.label);
+  });
+  document.querySelectorAll('.dv-ligne-sm').forEach(line => {
+    const prix = parseFloat(line.querySelector('.dv-sm-prix')?.value) || 0;
+    const qty = parseFloat(line.querySelector('.dv-sm-qty')?.value) || 1;
+    totalMensuelHT += prix * qty;
+  });
+
+  if (totalMensuelHT === 0) {
+    alert('Sélectionnez au moins une offre avant de sauvegarder.');
+    return;
+  }
+
+  const remise = parseFloat(document.getElementById('dv-remise')?.value) || 0;
+  const totalNetMensuel = totalMensuelHT * (1 - remise / 100);
+  const totalAnnuelHT = totalNetMensuel * 12;
+
+  // Gain = ce que le revendeur gagne (marge sur prix de vente)
+  // Le prix de vente inclut la marge. Gain mensuel = totalNetMensuel × marge / (100+marge)
+  const gainMensuel = totalNetMensuel * (marginPct / (100 + marginPct));
+  const gainAnnuel = gainMensuel * 12;
+
+  const sims = loadSimulations();
+  const isEditing = typeof window._editingSimIdx === 'number' && window._editingSimIdx >= 0 && window._editingSimIdx < sims.length;
+
+  const sim = {
+    id: isEditing ? sims[window._editingSimIdx].id : Date.now(),
+    numero: document.getElementById('dv-numero').value.trim(),
+    date: document.getElementById('dv-date').value,
+    client: document.getElementById('dv-cli-societe').value.trim() || 'Client sans nom',
+    pack: lignes.join(', ') || 'Sur mesure',
+    postes: currentPostes || '—',
+    ca: totalAnnuelHT,
+    gain: gainAnnuel,
+    billing: devisBilling,
+    status: isEditing ? (sims[window._editingSimIdx].status || 'en-cours') : 'en-cours'
+  };
+
+  if (isEditing) {
+    // Mise à jour de l'offre existante
+    sims[window._editingSimIdx] = sim;
+    window._editingSimIdx = undefined;
+  } else {
+    // Nouvelle simulation
+    sims.push(sim);
+  }
+
+  saveSimulations(sims);
+  updatePortfolio();
+
+  // Incrémenter le numéro de devis pour le prochain
+  if (!isEditing) {
+    devisCounter = sims.length + 1;
+    const t = new Date();
+    document.getElementById('dv-numero').value =
+      `DV-${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}-${String(devisCounter).padStart(3,'0')}`;
+  }
+
+  // Feedback visuel
+  const saveBtn = document.querySelector('.devis-actions .btn-devis-pdf');
+  const origHTML = saveBtn.innerHTML;
+  saveBtn.innerHTML = isEditing ? '✅ Mis à jour !' : '✅ Sauvegardé !';
+  saveBtn.style.background = '#18A558';
+  setTimeout(() => { saveBtn.innerHTML = origHTML; saveBtn.style.background = 'var(--green)'; }, 2000);
+
+  updateDevisPreview();
+}
+
+// ══════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════
+updateAll();
+updateStickyTops();
+updatePortfolio();
+window.addEventListener('resize', updateStickyTops);
+</script>
+</body>
+</html>
