@@ -306,7 +306,7 @@ tbody td:nth-child(5){background:#F5F7FF;border-left:1px solid #C7CCFF;border-ri
 
 /* Status selector dropdown */
 .status-dropdown{position:relative;display:inline-block}
-.status-menu{display:none;position:absolute;right:0;top:100%;margin-top:4px;background:#fff;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:10;min-width:180px;overflow:hidden}
+.status-menu{display:none;position:fixed;background:#fff;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.18);z-index:9999;min-width:180px;overflow:hidden}
 .status-menu.open{display:block}
 .status-menu-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border-light)}
 .status-menu-item:last-child{border:none}
@@ -325,7 +325,7 @@ tbody td:nth-child(5){background:#F5F7FF;border-left:1px solid #C7CCFF;border-ri
 .history-actions{position:relative}
 .btn-history-more{background:none;border:none;color:var(--text-light);cursor:pointer;font-size:18px;padding:4px 6px;border-radius:6px;line-height:1}
 .btn-history-more:hover{background:var(--bg-card);color:var(--text)}
-.actions-menu{display:none;position:absolute;right:0;top:100%;margin-top:4px;background:#fff;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:10;min-width:160px;overflow:hidden}
+.actions-menu{display:none;position:fixed;background:#fff;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.18);z-index:9999;min-width:160px;overflow:hidden}
 .actions-menu.open{display:block}
 .actions-menu-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border-light)}
 .actions-menu-item:last-child{border:none}
@@ -1168,6 +1168,7 @@ function openHistory(filter) {
         <div class="history-actions">
           <button class="btn-history-more" onclick="toggleActionsMenu(${realIdx}, event)" title="Actions">⋯</button>
           <div class="actions-menu" id="actions-menu-${realIdx}">
+            <div class="actions-menu-item" onclick="viewDevis(${realIdx})">👁️ Voir le devis</div>
             <div class="actions-menu-item" onclick="editSimulation(${realIdx})">✏️ Modifier</div>
             <div class="actions-menu-item" onclick="duplicateSimulation(${realIdx})">📋 Dupliquer</div>
             <div class="actions-menu-item danger" onclick="deleteSimulation(${realIdx})">🗑️ Supprimer</div>
@@ -1190,12 +1191,28 @@ document.addEventListener('click', e => {
 });
 
 // ── Toggle menus ──
+function positionMenu(menu, triggerEl) {
+  const rect = triggerEl.getBoundingClientRect();
+  const menuW = menu.offsetWidth || 180;
+  let top = rect.bottom + 6;
+  let left = rect.right - menuW;
+  // Éviter le débordement en bas
+  if (top + 200 > window.innerHeight) top = rect.top - 200;
+  // Éviter le débordement à gauche
+  if (left < 8) left = 8;
+  menu.style.top = top + 'px';
+  menu.style.left = left + 'px';
+}
+
 function toggleStatusMenu(idx, e) {
   e.stopPropagation();
   const menu = document.getElementById(`status-menu-${idx}`);
   const wasOpen = menu.classList.contains('open');
   closeAllMenus();
-  if (!wasOpen) menu.classList.add('open');
+  if (!wasOpen) {
+    menu.classList.add('open');
+    positionMenu(menu, e.currentTarget);
+  }
 }
 
 function toggleActionsMenu(idx, e) {
@@ -1203,7 +1220,10 @@ function toggleActionsMenu(idx, e) {
   const menu = document.getElementById(`actions-menu-${idx}`);
   const wasOpen = menu.classList.contains('open');
   closeAllMenus();
-  if (!wasOpen) menu.classList.add('open');
+  if (!wasOpen) {
+    menu.classList.add('open');
+    positionMenu(menu, e.currentTarget);
+  }
 }
 
 // ── Changer le statut ──
@@ -1252,18 +1272,83 @@ function editSimulation(idx) {
   const sims = loadSimulations();
   const sim = sims[idx];
 
-  // Fermer l'historique, ouvrir le devis
-  closeHistory();
+  // Stocker l'index + les données pour restauration
+  window._editingSimIdx = idx;
+  window._editingSimData = sim;
 
-  // Remplir le formulaire client
-  document.getElementById('dv-cli-societe').value = sim.client || '';
+  closeHistory();
+  openDevis();
+}
+
+function restoreDevisFromSim(sim) {
+  if (!sim) return;
+
+  // Numéro, date
   document.getElementById('dv-numero').value = sim.numero || '';
   if (sim.date) document.getElementById('dv-date').value = sim.date;
 
-  // Stocker l'index pour mettre à jour au lieu d'ajouter
-  window._editingSimIdx = idx;
+  // Champs client complets
+  const f = sim._form || {};
+  document.getElementById('dv-cli-societe').value = f.cliSociete || sim.client || '';
+  document.getElementById('dv-cli-contact').value = f.cliContact || '';
+  document.getElementById('dv-cli-email').value = f.cliEmail || '';
+  document.getElementById('dv-cli-tel').value = f.cliTel || '';
+  document.getElementById('dv-cli-adresse').value = f.cliAdresse || '';
+  document.getElementById('dv-cli-siret').value = f.cliSiret || '';
+  if (f.remise) document.getElementById('dv-remise').value = f.remise;
+  if (f.engagement) document.getElementById('dv-engagement').value = f.engagement;
 
-  openDevis();
+  // Facturation
+  if (f.billing || sim.billing) {
+    devisBilling = f.billing || sim.billing;
+    document.getElementById('dv-billing-annuel').classList.toggle('active', devisBilling === 'annuel');
+    document.getElementById('dv-billing-mensuel').classList.toggle('active', devisBilling === 'mensuel');
+    buildDevisPacks();
+  }
+
+  // Restaurer les packs sélectionnés
+  if (f.packsSelected && f.packsSelected.length > 0) {
+    f.packsSelected.forEach(({ id, qty }) => {
+      const item = document.querySelector(`.devis-pack-item[data-pack-id="${id}"]`);
+      if (!item) return;
+      const cb = item.querySelector('input[type=checkbox]');
+      if (cb) { cb.checked = true; item.classList.add('selected'); }
+      const wrap = item.querySelector('.dv-qty-wrap');
+      if (wrap) wrap.classList.add('visible');
+      const qtyInput = item.querySelector('.dv-qty');
+      if (qtyInput) qtyInput.value = qty;
+    });
+  }
+
+  updateDevisPreview();
+}
+
+function viewDevis(idx) {
+  const sims = loadSimulations();
+  const sim = sims[idx];
+  if (!sim || !sim.devisHtml) {
+    alert('Aperçu non disponible. Ouvrez et re-sauvegardez ce devis pour activer la visualisation.');
+    return;
+  }
+  // Créer une modale de visualisation
+  let viewModal = document.getElementById('devisViewModal');
+  if (!viewModal) {
+    viewModal = document.createElement('div');
+    viewModal.id = 'devisViewModal';
+    viewModal.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;align-items:center;justify-content:center;padding:20px';
+    viewModal.innerHTML = `
+      <div style="background:#fff;border-radius:16px;width:100%;max-width:760px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #E8E4DE">
+          <div style="font-size:15px;font-weight:800">Aperçu du devis</div>
+          <button onclick="document.getElementById('devisViewModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888">✕</button>
+        </div>
+        <div id="devisViewContent" style="overflow-y:auto;flex:1;padding:24px;font-family:'Inter',sans-serif"></div>
+      </div>`;
+    document.body.appendChild(viewModal);
+    viewModal.addEventListener('click', e => { if (e.target === viewModal) viewModal.style.display = 'none'; });
+  }
+  document.getElementById('devisViewContent').innerHTML = sim.devisHtml;
+  viewModal.style.display = 'flex';
 }
 
 // ══════════════════════════════════════════════════
@@ -1332,7 +1417,14 @@ function openDevis() {
   document.getElementById('dv-billing-mensuel').classList.toggle('active', devisBilling === 'mensuel');
 
   buildDevisPacks();
-  updateDevisPreview();
+
+  // Restaurer les données si on est en mode édition
+  if (window._editingSimData) {
+    restoreDevisFromSim(window._editingSimData);
+    window._editingSimData = undefined;
+  } else {
+    updateDevisPreview();
+  }
 }
 
 function closeDevis() {
@@ -1688,7 +1780,27 @@ function sauvegarderDevis() {
     ca: totalAnnuelHT,
     gain: gainAnnuel,
     billing: devisBilling,
-    status: isEditing ? (sims[window._editingSimIdx].status || 'en-cours') : 'en-cours'
+    marge: marginPct,
+    status: isEditing ? (sims[window._editingSimIdx].status || 'en-cours') : 'en-cours',
+    lostReason: isEditing ? (sims[window._editingSimIdx].lostReason || '') : '',
+    // Champs complets pour restauration à l'édition
+    _form: {
+      cliSociete: document.getElementById('dv-cli-societe').value.trim(),
+      cliContact: document.getElementById('dv-cli-contact').value.trim(),
+      cliEmail: document.getElementById('dv-cli-email').value.trim(),
+      cliTel: document.getElementById('dv-cli-tel').value.trim(),
+      cliAdresse: document.getElementById('dv-cli-adresse').value.trim(),
+      cliSiret: document.getElementById('dv-cli-siret').value.trim(),
+      remise: document.getElementById('dv-remise').value,
+      engagement: document.getElementById('dv-engagement').value,
+      billing: devisBilling,
+      packsSelected: [...document.querySelectorAll('.devis-pack-item.selected')].map(el => ({
+        id: el.dataset.packId,
+        qty: parseInt(el.querySelector('.dv-qty')?.value) || 1
+      })),
+    },
+    // HTML du devis pour visualisation
+    devisHtml: document.getElementById('devisPreview').innerHTML,
   };
 
   if (isEditing) {
