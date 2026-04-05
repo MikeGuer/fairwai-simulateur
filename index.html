@@ -141,6 +141,12 @@ tbody td:nth-child(5){background:#F5F7FF;border-left:1px solid #C7CCFF;border-ri
 /* ── INLINE CALC ── */
 .calc-inline-row{border-top:1.5px dashed var(--border)!important;background:var(--bg-card)!important;cursor:default}
 .calc-inline-row:hover{background:var(--bg-card)!important}
+/* Sur mesure rows */
+.row-sur-mesure{background:#FAFBFF!important}
+.row-sur-mesure:hover{background:#F2F4FF!important}
+/* Recharge rows */
+.row-recharge{background:#FFF8E1!important;cursor:default}
+.row-recharge:hover{background:#FEF3DC!important}
 .inline-hours-wrap{display:flex;align-items:center;gap:8px}
 .inline-hours-label{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .inline-hours-input{width:80px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-weight:700;color:var(--text);text-align:center;outline:none;font-family:inherit;background:var(--white)}
@@ -455,15 +461,15 @@ footer strong{color:rgba(255,255,255,.8)}
       <div class="table-title">
         Licence Partagée — Forfaits horaires
         <span style="font-size:12px;font-weight:500;color:var(--text-light)">(nb d'utilisateurs illimité)</span>
-        <span class="table-title-badge">3 paliers + sur mesure</span>
+        <span class="table-title-badge">7 paliers + recharges</span>
       </div>
       <table id="table360">
         <thead>
           <tr>
             <th>Palier</th>
-            <th>Prix d'achat</th>
-            <th>Client / poste</th>
-            <th>Prix client suggéré</th>
+            <th>Prix d'achat<br>revendeur mensuel HT</th>
+            <th>Client / poste HT</th>
+            <th>Prix réf. Client<br>final mensuel HT</th>
             <th id="gainLabel360">Marge annuelle revendeur</th>
           </tr>
         </thead>
@@ -494,15 +500,15 @@ footer strong{color:rgba(255,255,255,.8)}
       <div class="table-title">
         Licence Partagée — Forfaits horaires
         <span style="font-size:12px;font-weight:500;color:var(--text-light)">(nb d'utilisateurs illimité)</span>
-        <span class="table-title-badge">3 paliers + sur mesure</span>
+        <span class="table-title-badge">7 paliers + recharges</span>
       </div>
       <table id="tableVoice">
         <thead>
           <tr>
             <th>Palier</th>
-            <th>Prix d'achat</th>
-            <th>Client / poste</th>
-            <th>Prix client suggéré</th>
+            <th>Prix d'achat<br>revendeur mensuel HT</th>
+            <th>Client / poste HT</th>
+            <th>Prix réf. Client<br>final mensuel HT</th>
             <th id="gainLabelVoice">Marge annuelle revendeur</th>
           </tr>
         </thead>
@@ -674,26 +680,30 @@ footer strong{color:rgba(255,255,255,.8)}
 //  DATA (identique Thomas)
 // ══════════════════════════════════════════════════
 const data360 = [
-  { palier:'15 h', mensuelAchat:21, annuelAchat:18, hMensuel:1.40, hAnnuel:1.19, clientMensuel:29, clientAnnuel:24.90 },
-  { palier:'30 h', mensuelAchat:42, annuelAchat:35, hMensuel:1.40, hAnnuel:1.19, clientMensuel:59, clientAnnuel:49.90 },
-  { palier:'50 h', mensuelAchat:64, annuelAchat:55, hMensuel:1.28, hAnnuel:1.088, clientMensuel:89, clientAnnuel:75 },
+  { palier:'15 h',  mensuelAchat:21,     annuelAchat:18,     clientMensuel:29.90,  clientAnnuel:25.90 },
+  { palier:'30 h',  mensuelAchat:42,     annuelAchat:35,     clientMensuel:59.90,  clientAnnuel:49.90 },
+  { palier:'50 h',  mensuelAchat:64,     annuelAchat:55,     clientMensuel:89.90,  clientAnnuel:79.90 },
+  { palier:'75 h',  mensuelAchat:89,     annuelAchat:75.65,  clientMensuel:124.60, clientAnnuel:105.91, surMesure:true },
+  { palier:'100 h', mensuelAchat:119,    annuelAchat:101.15, clientMensuel:166.60, clientAnnuel:141.61, surMesure:true },
+  { palier:'200 h', mensuelAchat:233.33, annuelAchat:198.33, clientMensuel:326.67, clientAnnuel:277.67, surMesure:true },
+  { palier:'500 h', mensuelAchat:572.50, annuelAchat:486.63, clientMensuel:801.50, clientAnnuel:681.28, surMesure:true },
 ];
-const tiers360 = [
-  { label:'75 h',  min:51,  max:75,  mensuelAchat:89,     annuelAchat:75.65,  hMensuel:1.187, hAnnuel:1.009, clientHMensuel:1.6613, clientHAnnuel:1.4121 },
-  { label:'100 h', min:76,  max:100, mensuelAchat:119,    annuelAchat:101.15, hMensuel:1.190, hAnnuel:1.012, clientHMensuel:1.6660, clientHAnnuel:1.4161 },
-  { label:'200 h', min:101, max:200, mensuelAchat:233.33, annuelAchat:198.33, hMensuel:1.167, hAnnuel:0.992, clientHMensuel:1.6334, clientHAnnuel:1.3884 },
-  { label:'500 h', min:201, max:500, mensuelAchat:572.50, annuelAchat:486.63, hMensuel:1.145, hAnnuel:0.973, clientHMensuel:1.6030, clientHAnnuel:1.3626 },
+const recharges360 = [
+  { palier:'5 h',  mensuelAchat:7,    clientMensuel:9.90 },
+  { palier:'10 h', mensuelAchat:12,   clientMensuel:16.90 },
 ];
 const dataVoice = [
-  { palier:'15 h', mensuelAchat:10.50, annuelAchat:9,    hMensuel:0.700, hAnnuel:0.595, clientMensuel:14.50, clientAnnuel:12.45 },
-  { palier:'30 h', mensuelAchat:21,    annuelAchat:17.50, hMensuel:0.700, hAnnuel:0.595, clientMensuel:29.50, clientAnnuel:24.95 },
-  { palier:'50 h', mensuelAchat:32,    annuelAchat:27.50, hMensuel:0.640, hAnnuel:0.544, clientMensuel:44.50, clientAnnuel:37.50 },
+  { palier:'15 h',  mensuelAchat:10.50,  annuelAchat:9,      clientMensuel:14.90,  clientAnnuel:12.90 },
+  { palier:'30 h',  mensuelAchat:21,     annuelAchat:17.50,  clientMensuel:29.90,  clientAnnuel:24.90 },
+  { palier:'50 h',  mensuelAchat:32,     annuelAchat:27.50,  clientMensuel:44.90,  clientAnnuel:39.90 },
+  { palier:'75 h',  mensuelAchat:44.50,  annuelAchat:37.83,  clientMensuel:62.30,  clientAnnuel:52.96,  surMesure:true },
+  { palier:'100 h', mensuelAchat:59.50,  annuelAchat:50.58,  clientMensuel:83.30,  clientAnnuel:70.80,  surMesure:true },
+  { palier:'200 h', mensuelAchat:116.67, annuelAchat:99.17,  clientMensuel:163.33, clientAnnuel:138.83, surMesure:true },
+  { palier:'500 h', mensuelAchat:286.25, annuelAchat:243.31, clientMensuel:400.75, clientAnnuel:340.64, surMesure:true },
 ];
-const tiersVoice = [
-  { label:'75 h',  min:51,  max:75,  mensuelAchat:44.50,  annuelAchat:37.83,  hMensuel:0.593, hAnnuel:0.504, clientHMensuel:0.8307, clientHAnnuel:0.7061 },
-  { label:'100 h', min:76,  max:100, mensuelAchat:59.50,  annuelAchat:50.58,  hMensuel:0.595, hAnnuel:0.506, clientHMensuel:0.8330, clientHAnnuel:0.7081 },
-  { label:'200 h', min:101, max:200, mensuelAchat:116.67, annuelAchat:99.17,  hMensuel:0.583, hAnnuel:0.496, clientHMensuel:0.8167, clientHAnnuel:0.6942 },
-  { label:'500 h', min:201, max:500, mensuelAchat:286.25, annuelAchat:243.31, hMensuel:0.573, hAnnuel:0.487, clientHMensuel:0.8015, clientHAnnuel:0.6813 },
+const rechargesVoice = [
+  { palier:'5 h',  mensuelAchat:3.50,  clientMensuel:4.90 },
+  { palier:'10 h', mensuelAchat:5.93,  clientMensuel:8.90 },
 ];
 const licenceExec = {
   name:'Licence Executive Illimitée <span style="font-size:12px;font-weight:500;color:var(--text-light)">(individuelle)</span>',
@@ -716,6 +726,7 @@ let selectedPack = null; // {tableId, rowIndex, data}
 //  UTILS
 // ══════════════════════════════════════════════════
 const fmt = v => v.toFixed(2).replace('.', ',') + ' €';
+const fmtHT = v => v.toFixed(2).replace('.', ',') + ' € HT';
 const fmtN = v => v.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
 
 // Prix de vente = prix d'achat × (1 + marge%)
@@ -728,16 +739,15 @@ function getTelcoPerPoste() {
 }
 
 // ══════════════════════════════════════════════════
-//  RENDER TABLE — new column order
-//  Palier | Prix achat | Client/poste | Prix client suggéré | Gain
+//  RENDER TABLE
+//  Palier | Prix achat revendeur HT | Client/poste HT | Prix réf. client final HT | Marge HT
 // ══════════════════════════════════════════════════
 function renderTable(tableId, data) {
-  const tiersMap = { table360: tiers360, tableVoice: tiersVoice };
   const prefixMap = { table360:'Pack 360', tableVoice:'Pack Voice' };
+  const rechargesMap = { table360: recharges360, tableVoice: rechargesVoice };
   const prefix = prefixMap[tableId];
+  const rechargesData = rechargesMap[tableId];
   const tbody = document.querySelector(`#${tableId} tbody`);
-  const existingInput = tbody.querySelector('.inline-hours-input');
-  const savedHours = existingInput ? existingInput.value : '';
   tbody.innerHTML = '';
 
   const isAnnual = billing === 'annuel';
@@ -745,118 +755,110 @@ function renderTable(tableId, data) {
   const gainMultiplier = isAnnual ? 12 : 1;
   const gainWord = isAnnual ? 'annuel' : 'mensuel';
 
+  let firstSurMesure = true;
+
   data.forEach((row, idx) => {
     const achat = isAnnual ? row.annuelAchat : row.mensuelAchat;
+    const clientRef = isAnnual ? row.clientAnnuel : row.clientMensuel;
     const packCap = Math.floor(parseInt(row.palier) / 3);
     const postes = currentPostes || packCap;
-    // Prix de vente = prix d'achat × (1 + marge%)
+    // Prix de vente = prix d'achat × (1 + marge%) — utilisé pour col 3 par poste
     const prixVente = achat * (1 + marginPct / 100);
     const gainMensuel = prixVente - achat;
     const gainTotal = gainMensuel * gainMultiplier;
-    // Client/poste = prix de vente pool / nb postes + téléphonie éventuelle
     const iaParPoste = prixVente / postes;
     const clientParPoste = iaParPoste + telco;
+
+    // Séparateur avant la première ligne sur mesure
+    if (row.surMesure && firstSurMesure) {
+      firstSurMesure = false;
+      const sepTr = document.createElement('tr');
+      sepTr.style.cssText = 'background:var(--bg)!important;cursor:default';
+      sepTr.innerHTML = `<td colspan="5" style="padding:4px 24px;font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;border-top:2px solid var(--border)">Sur mesure</td>`;
+      tbody.appendChild(sepTr);
+    }
 
     const tr = document.createElement('tr');
     tr.dataset.tableId = tableId;
     tr.dataset.rowIndex = idx;
     tr.onclick = () => selectRow(tableId, idx);
+    if (row.surMesure) tr.classList.add('row-sur-mesure');
 
     tr.innerHTML = `
       <td>
-        <span class="palier-badge">${prefix} ${row.palier.replace(' h','h')}</span>
+        <span class="palier-badge">${prefix} - ${row.palier.replace(' h','h')}</span>
         <div style="font-size:11px;color:var(--text-light);margin-top:4px">≈ ${packCap} postes</div>
       </td>
       <td>
-        <div style="font-size:16px;font-weight:800;color:var(--black)">${fmt(achat)}</div>
+        <div style="font-size:16px;font-weight:800;color:var(--black)">${fmtHT(achat)}</div>
         <div style="font-size:11px;color:var(--text-light);margin-top:2px">/mois</div>
       </td>
       <td>
-        <div style="font-size:15px;font-weight:700;color:var(--green)">${fmt(clientParPoste)}</div>
-        <div style="font-size:11px;color:var(--text-light);margin-top:2px">${telco > 0 ? `IA ${fmt(iaParPoste)} + Tél. ${fmt(telco)}` : '/ poste / mois'}</div>
+        <div style="font-size:15px;font-weight:700;color:var(--green)">${fmtHT(clientParPoste)}</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:2px">${telco > 0 ? `IA ${fmtHT(iaParPoste)} + Tél. ${fmtHT(telco)}` : '/ poste / mois'}</div>
       </td>
       <td>
-        <div style="font-size:16px;font-weight:800;color:var(--green)">${fmt(prixVente)}</div>
-        ${telco > 0 && currentPostes ? `<div style="font-size:11px;color:var(--green);opacity:.7">+ tél. ${fmt(telco * postes)}/mois</div>` : `<div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>`}
+        <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(clientRef)}</div>
+        <div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>
       </td>
       <td>
-        <div style="font-size:16px;font-weight:800;color:var(--accent)">${fmt(gainTotal)}</div>
+        <div style="font-size:16px;font-weight:800;color:var(--accent)">${fmtHT(gainTotal)}</div>
         <div style="font-size:11px;color:var(--text-light)">${gainWord}</div>
       </td>
     `;
     tbody.appendChild(tr);
   });
 
-  // Inline calc row for >50h
-  const calcTr = document.createElement('tr');
-  calcTr.className = 'calc-inline-row';
-  calcTr.innerHTML = `
-    <td>
-      <div class="inline-hours-wrap">
-        <span class="inline-hours-label">Sur mesure</span>
-        <input type="number" class="inline-hours-input" placeholder="ex: 80" min="51" max="500"
-          value="${savedHours}" oninput="updateInlineCalc('${tableId}',this.value)">
-        <span style="font-size:11px;color:var(--text-light);font-weight:600">h</span>
-      </div>
-    </td>
-    <td class="ic-achat"><span class="ic-empty">—</span></td>
-    <td class="ic-client-poste"><span class="ic-empty">—</span></td>
-    <td class="ic-client"><span class="ic-empty">—</span></td>
-    <td class="ic-gain"><span class="ic-empty">—</span></td>
-  `;
-  tbody.appendChild(calcTr);
-  if (savedHours) updateInlineCalc(tableId, savedHours);
+  // Lignes recharge
+  if (rechargesData && rechargesData.length > 0) {
+    const rechSepTr = document.createElement('tr');
+    rechSepTr.style.cssText = 'background:var(--gold-light)!important;cursor:default';
+    rechSepTr.innerHTML = `<td colspan="5" style="padding:4px 24px;font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.6px;border-top:2px solid var(--border)">Packs Recharge (ponctuel)</td>`;
+    tbody.appendChild(rechSepTr);
+
+    rechargesData.forEach(row => {
+      const achat = row.mensuelAchat;
+      const clientRef = row.clientMensuel;
+      const gain = clientRef - achat;
+
+      const tr = document.createElement('tr');
+      tr.classList.add('row-recharge');
+
+      tr.innerHTML = `
+        <td>
+          <span class="palier-badge" style="background:var(--gold)">${prefix} - Recharge ${row.palier.replace(' h','h')}</span>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px">usage ponctuel</div>
+        </td>
+        <td>
+          <div style="font-size:16px;font-weight:800;color:var(--black)">${fmtHT(achat)}</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:2px">à l'achat</div>
+        </td>
+        <td>
+          <div style="font-size:13px;color:var(--text-light)">—</div>
+        </td>
+        <td>
+          <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(clientRef)}</div>
+          <div style="font-size:11px;color:var(--green);opacity:.7">à l'unité</div>
+        </td>
+        <td>
+          <div style="font-size:16px;font-weight:800;color:var(--accent)">${fmtHT(gain)}</div>
+          <div style="font-size:11px;color:var(--text-light)">par recharge</div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
 }
 
-// ══════════════════════════════════════════════════
-//  INLINE CALC (>50h)
-// ══════════════════════════════════════════════════
-function updateInlineCalc(tableId, val) {
-  const tiersMap = { table360: tiers360, tableVoice: tiersVoice };
-  const tiersData = tiersMap[tableId];
-  const tbody = document.querySelector(`#${tableId} tbody`);
-  const row = tbody.querySelector('.calc-inline-row');
-  if (!row) return;
-
-  const hours = parseInt(val, 10);
-  const empty = s => `<span class="ic-empty">${s}</span>`;
-  const set = (cls, html) => { row.querySelector(cls).innerHTML = html; };
-  const allEmpty = () => ['.ic-achat','.ic-client-poste','.ic-client','.ic-gain'].forEach(c => set(c, empty('—')));
-
-  if (!val || isNaN(hours) || hours < 1) { allEmpty(); return; }
-  if (hours <= 50) { set('.ic-achat', empty('↑ forfait standard')); ['.ic-client-poste','.ic-client','.ic-gain'].forEach(c => set(c, empty('—'))); return; }
-  if (hours > 500) { set('.ic-achat', `<span style="font-size:12px;color:var(--text-light)">Sur devis > 500h</span>`); ['.ic-client-poste','.ic-client','.ic-gain'].forEach(c => set(c, empty('—'))); return; }
-
-  const tier = tiersData.find(t => hours >= t.min && hours <= t.max);
-  if (!tier) { allEmpty(); return; }
-
-  const isAnnual = billing === 'annuel';
-  const hRate = isAnnual ? tier.hAnnuel : tier.hMensuel;
-  const achat = hours * hRate;
-  const prixVente = achat * (1 + marginPct / 100);
-  const gainMensuel = prixVente - achat;
-  const postes = currentPostes || Math.ceil(hours / 3);
-  const telco = getTelcoPerPoste();
-  const iaParPoste = prixVente / postes;
-  const clientParPoste = iaParPoste + telco;
-  const gainMultiplier = isAnnual ? 12 : 1;
-  const gainTotal = gainMensuel * gainMultiplier;
-  const gainWord = isAnnual ? 'annuel' : 'mensuel';
-
-  set('.ic-achat', `<div style="font-size:16px;font-weight:800;color:var(--black)">${fmt(achat)}</div><div style="font-size:11px;color:var(--text-light)">${hours}h × ${fmt(hRate).replace(' €','€')}/h</div>`);
-  set('.ic-client-poste', `<div style="font-size:15px;font-weight:700;color:var(--green)">${fmt(clientParPoste)}</div><div style="font-size:11px;color:var(--text-light)">${telco > 0 ? `IA ${fmt(iaParPoste)} + Tél. ${fmt(telco)}` : '/ poste / mois'}</div>`);
-  set('.ic-client', `<div style="font-size:16px;font-weight:800;color:var(--green)">${fmt(prixVente)}</div><div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>`);
-  set('.ic-gain', `<div style="font-size:16px;font-weight:800;color:var(--accent)">${fmt(gainTotal)}</div><div style="font-size:11px;color:var(--text-light)">${gainWord}</div>`);
-}
 
 // ══════════════════════════════════════════════════
 //  ROW SELECTION (for devis pre-fill)
 // ══════════════════════════════════════════════════
 function selectRow(tableId, rowIndex) {
   document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
-  const rows = Array.from(document.querySelectorAll(`#${tableId} tbody tr:not(.calc-inline-row)`));
-  if (rows[rowIndex]) {
-    rows[rowIndex].classList.add('row-selected');
+  const row = document.querySelector(`#${tableId} tbody tr[data-row-index="${rowIndex}"]`);
+  if (row) {
+    row.classList.add('row-selected');
     const dataMap = { table360: data360, tableVoice: dataVoice };
     selectedPack = { tableId, rowIndex, data: dataMap[tableId][rowIndex] };
   }
@@ -880,23 +882,23 @@ function renderLicenceCard(containerId, lic, cssClass) {
       <div class="licence-note">${lic.note}</div>
       <div class="licence-prices">
         <div class="lp-block lp-block-achat">
-          <div class="lp-label">Prix d'achat</div>
-          <div class="lp-value" style="color:var(--black)">${fmt(achat)}</div>
+          <div class="lp-label">Prix d'achat HT</div>
+          <div class="lp-value" style="color:var(--black)">${fmtHT(achat)}</div>
           <div class="lp-sub" style="color:var(--text-light)">/mois</div>
         </div>
         <div class="lp-block lp-block-client">
-          <div class="lp-label" style="color:var(--green)">Prix de vente</div>
-          <div class="lp-value" style="color:var(--green)">${fmt(prixVente)}</div>
+          <div class="lp-label" style="color:var(--green)">Prix de vente HT</div>
+          <div class="lp-value" style="color:var(--green)">${fmtHT(prixVente)}</div>
           <div class="lp-sub" style="color:var(--green)">+${marginPct}% /mois</div>
         </div>
         <div class="lp-block lp-block-sell">
-          <div class="lp-label" style="color:var(--accent-text)">Marge mensuelle revendeur</div>
-          <div class="lp-value" style="color:var(--accent)">${fmt(gainMensuel)}</div>
+          <div class="lp-label" style="color:var(--accent-text)">Marge mensuelle revendeur HT</div>
+          <div class="lp-value" style="color:var(--accent)">${fmtHT(gainMensuel)}</div>
           <div class="lp-sub" style="color:var(--accent)">/ mois</div>
         </div>
         <div class="lp-block lp-block-sell">
           <div class="lp-label" style="color:var(--accent-text)">${gainWord}</div>
-          <div class="lp-value" style="color:var(--accent)">${fmt(gainMensuel * gainMultiplier)}</div>
+          <div class="lp-value" style="color:var(--accent)">${fmtHT(gainMensuel * gainMultiplier)}</div>
           <div class="lp-sub" style="color:var(--accent)">${isAnnual ? '× 12 mois' : ''}</div>
         </div>
       </div>
@@ -905,7 +907,7 @@ function renderLicenceCard(containerId, lic, cssClass) {
 }
 
 // ══════════════════════════════════════════════════
-//  HIGHLIGHT + BADGE (no "×3h" calc shown)
+//  HIGHLIGHT + BADGE
 // ══════════════════════════════════════════════════
 function applyHighlightAndBadge() {
   document.querySelectorAll('.row-recommended').forEach(r => r.classList.remove('row-recommended'));
@@ -917,30 +919,26 @@ function applyHighlightAndBadge() {
   }
 
   const heures = currentPostes * 3;
-  let rowIndex, packLabel, isSurMesure = false;
+  let rowIndex, packLabel;
 
-  if (heures <= 15)      { rowIndex = 0; packLabel = '15h'; }
-  else if (heures <= 30) { rowIndex = 1; packLabel = '30h'; }
-  else if (heures <= 50) { rowIndex = 2; packLabel = '50h'; }
-  else                   { rowIndex = 3; isSurMesure = true; }
+  if (heures <= 15)       { rowIndex = 0; packLabel = 'Pack - 15h'; }
+  else if (heures <= 30)  { rowIndex = 1; packLabel = 'Pack - 30h'; }
+  else if (heures <= 50)  { rowIndex = 2; packLabel = 'Pack - 50h'; }
+  else if (heures <= 75)  { rowIndex = 3; packLabel = 'Pack - 75h (sur mesure)'; }
+  else if (heures <= 100) { rowIndex = 4; packLabel = 'Pack - 100h (sur mesure)'; }
+  else if (heures <= 200) { rowIndex = 5; packLabel = 'Pack - 200h (sur mesure)'; }
+  else if (heures <= 500) { rowIndex = 6; packLabel = 'Pack - 500h (sur mesure)'; }
+  else                    { rowIndex = null; packLabel = 'Sur devis (> 500h)'; }
 
-  // Highlight recommended row on BOTH tables (but all rows remain visible)
+  // Highlight recommended row on BOTH tables
   ['table360','tableVoice'].forEach(tableId => {
-    const rows = Array.from(document.querySelectorAll(`#${tableId} tbody tr`));
-    if (rows[rowIndex]) rows[rowIndex].classList.add('row-recommended');
+    const row = document.querySelector(`#${tableId} tbody tr[data-row-index="${rowIndex}"]`);
+    if (row) row.classList.add('row-recommended');
   });
 
-  if (isSurMesure) {
-    document.querySelectorAll('.inline-hours-input').forEach(inp => {
-      inp.value = heures;
-      const tbl = inp.closest('table');
-      if (tbl) updateInlineCalc(tbl.id, heures);
-    });
-  }
-
-  const badgeHtml = isSurMesure
-    ? `<span class="reco-badge reco-badge-custom">Sur mesure — ${heures}h recommandé</span>`
-    : `<span class="reco-badge">Pack ${packLabel} recommandé</span>`;
+  const badgeHtml = rowIndex === null
+    ? `<span class="reco-badge reco-badge-custom">Sur devis — ${heures}h requis</span>`
+    : `<span class="reco-badge">${packLabel} recommandé</span>`;
 
   result.innerHTML = badgeHtml;
 }
@@ -1281,13 +1279,15 @@ function editSimulation(idx) {
 }
 
 function inferPacksFromSim(sim) {
-  // Tente de retrouver l'ID du pack depuis le texte sauvegardé (ex: "Pack 360 30 h")
+  // Tente de retrouver l'ID du pack depuis le texte sauvegardé
+  // Normalise " - " pour compatibilité ancien/nouveau format
   if (!sim.pack) return [];
-  const packText = sim.pack.toLowerCase();
+  const normalize = s => s.toLowerCase().replace(/ - /g, ' ').replace(/\s+/g, ' ').trim();
+  const packText = normalize(sim.pack);
   const allItems = [...document.querySelectorAll('.devis-pack-item')];
   const matched = allItems.filter(el => {
-    const label = (el.dataset.label || '').toLowerCase();
-    return label && packText.includes(label.replace(/\s+/g,' ').trim().toLowerCase().substring(0,10));
+    const label = normalize(el.dataset.label || '');
+    return label && packText.includes(label.substring(0, 12));
   });
   return matched.map(el => ({ id: el.dataset.packId, qty: 1 }));
 }
@@ -1522,15 +1522,18 @@ function buildDevisPacks() {
   container.innerHTML = '';
   const isAnnualBilling = devisBilling === 'annuel';
   const bl = isAnnualBilling ? '/an' : '/mois';
+
   // type: 'pool' = licence partagée (qté=1), 'unit' = par poste (qté=nb postes)
-  function makeItem(id, label, prixMensuel, type = 'pool') {
-    const prixDevis = isAnnualBilling ? prixMensuel * 12 : prixMensuel;
+  // noAnnual: true = ne pas multiplier par 12 même en facturation annuelle (ex: recharges)
+  function makeItem(id, label, prixMensuel, type = 'pool', noAnnual = false) {
+    const prixDevis = (isAnnualBilling && !noAnnual) ? prixMensuel * 12 : prixMensuel;
+    const uniteLabel = noAnnual ? '/unité' : bl;
     const div = document.createElement('div');
     div.className = 'devis-pack-item';
     div.dataset.packId = id;
     div.dataset.prix = prixDevis;
     div.dataset.label = label;
-    div.dataset.unite = bl;
+    div.dataset.unite = uniteLabel;
     div.dataset.type = type;
     const defaultQty = type === 'unit' ? (currentPostes || 1) : 1;
     const qtyLabel = type === 'unit' ? 'postes' : 'licence(s)';
@@ -1541,14 +1544,14 @@ function buildDevisPacks() {
         <input type="number" class="dv-qty" value="${defaultQty}" min="1" max="999" oninput="updateDevisPreview()" title="Quantité">
         <span style="font-size:10px;color:var(--text-light);font-weight:700">× <span style="font-size:9px">${qtyLabel}</span></span>
       </span>
-      <span class="devis-pack-price">${fmt(prixDevis)}<span style="font-size:11px;font-weight:500;color:var(--text-light)"> ${bl}</span></span>
+      <span class="devis-pack-price">${fmt(prixDevis)}<span style="font-size:11px;font-weight:500;color:var(--text-light)"> ${uniteLabel}</span></span>
     `;
     return div;
   }
 
-  function addHeader(txt) {
+  function addHeader(txt, color) {
     const h = document.createElement('div');
-    h.style.cssText = 'font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;margin:10px 0 4px';
+    h.style.cssText = `font-size:10px;font-weight:700;color:${color||'var(--text-light)'};text-transform:uppercase;letter-spacing:.6px;margin:10px 0 4px`;
     h.textContent = txt;
     container.appendChild(h);
   }
@@ -1556,13 +1559,31 @@ function buildDevisPacks() {
   addHeader('Fairwai 360 — Forfaits');
   data360.forEach(row => {
     const achat = devisBilling === 'annuel' ? row.annuelAchat : row.mensuelAchat;
-    container.appendChild(makeItem(`pack-360-${row.palier}`, `Pack 360 ${row.palier}`, achat * (1 + marginPct / 100)));
+    const label = `Pack 360 - ${row.palier.replace(' h','h')}`;
+    const id = `pack-360-${row.palier.replace(/ /g,'_')}`;
+    container.appendChild(makeItem(id, label, achat * (1 + marginPct / 100)));
+  });
+
+  addHeader('Fairwai 360 — Recharges', 'var(--gold)');
+  recharges360.forEach(row => {
+    const label = `Pack 360 - Recharge ${row.palier.replace(' h','h')}`;
+    const id = `pack-360-rech-${row.palier.replace(/ /g,'_')}`;
+    container.appendChild(makeItem(id, label, row.mensuelAchat * (1 + marginPct / 100), 'pool', true));
   });
 
   addHeader('Fairwai Voice — Forfaits');
   dataVoice.forEach(row => {
     const achat = devisBilling === 'annuel' ? row.annuelAchat : row.mensuelAchat;
-    container.appendChild(makeItem(`pack-voice-${row.palier}`, `Pack Voice ${row.palier}`, achat * (1 + marginPct / 100)));
+    const label = `Pack Voice - ${row.palier.replace(' h','h')}`;
+    const id = `pack-voice-${row.palier.replace(/ /g,'_')}`;
+    container.appendChild(makeItem(id, label, achat * (1 + marginPct / 100)));
+  });
+
+  addHeader('Fairwai Voice — Recharges', 'var(--gold)');
+  rechargesVoice.forEach(row => {
+    const label = `Pack Voice - Recharge ${row.palier.replace(' h','h')}`;
+    const id = `pack-voice-rech-${row.palier.replace(/ /g,'_')}`;
+    container.appendChild(makeItem(id, label, row.mensuelAchat * (1 + marginPct / 100), 'pool', true));
   });
 
   // Telephony option — prix par poste, quantité = nb postes
@@ -1581,9 +1602,10 @@ function buildDevisPacks() {
 
   // Auto-select pack from simulator
   if (selectedPack) {
-    const prefix = selectedPack.tableId === 'table360' ? 'Pack 360' : 'Pack Voice';
     const palier = selectedPack.data.palier;
-    const targetId = selectedPack.tableId === 'table360' ? `pack-360-${palier}` : `pack-voice-${palier}`;
+    const targetId = selectedPack.tableId === 'table360'
+      ? `pack-360-${palier.replace(/ /g,'_')}`
+      : `pack-voice-${palier.replace(/ /g,'_')}`;
     const item = document.querySelector(`.devis-pack-item[data-pack-id="${targetId}"]`);
     if (item) {
       const cb = item.querySelector('input[type=checkbox]');
