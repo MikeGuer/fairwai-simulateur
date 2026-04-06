@@ -427,15 +427,15 @@ footer strong{color:rgba(255,255,255,.8)}
   <div class="reco-inner">
     <div class="reco-left">
       <span style="font-size:18px">🏢</span>
-      <span class="reco-label">Postes client</span>
+      <span class="reco-label">Utilisateurs client</span>
       <div class="reco-input-wrap">
         <input type="number" id="recoPostes" class="reco-input" min="1" max="999" placeholder="ex: 10"
           oninput="updateRecommendation(this.value)">
-        <span class="reco-unit">postes</span>
+        <span class="reco-unit">utilisateurs</span>
       </div>
     </div>
     <div class="reco-result" id="recoResult">
-      <span class="reco-placeholder">Entrez un nombre de postes pour voir le pack recommandé</span>
+      <span class="reco-placeholder">Entrez un nombre d'utilisateurs pour voir le pack recommandé</span>
     </div>
     <div class="telco-option">
       <input type="checkbox" id="telcoCheck" class="telco-check" onchange="updateAll()">
@@ -787,7 +787,7 @@ function renderTable(tableId, data) {
     tr.innerHTML = `
       <td>
         <span class="palier-badge">${prefix} - ${row.palier.replace(' h','h')}</span>
-        <div style="font-size:11px;color:var(--text-light);margin-top:4px">≈ ${packCap} postes</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:4px">≈ ${packCap} utilisateurs</div>
       </td>
       <td>
         <div style="font-size:16px;font-weight:800;color:var(--black)">${fmtHT(achat)}</div>
@@ -795,7 +795,7 @@ function renderTable(tableId, data) {
       </td>
       <td>
         <div style="font-size:15px;font-weight:700;color:var(--green)">${fmtHT(clientParPoste)}</div>
-        <div style="font-size:11px;color:var(--text-light);margin-top:2px">${telco > 0 ? `IA ${fmtHT(iaParPoste)} + Tél. ${fmtHT(telco)}` : '/ poste / mois'}</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:2px">${telco > 0 ? `IA ${fmtHT(iaParPoste)} + Tél. ${fmtHT(telco)}` : '/ utilisateur / mois'}</div>
       </td>
       <td>
         <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(clientRef)}</div>
@@ -914,7 +914,7 @@ function applyHighlightAndBadge() {
   const result = document.getElementById('recoResult');
 
   if (!currentPostes || currentPostes < 1) {
-    result.innerHTML = '<span class="reco-placeholder">Entrez un nombre de postes pour voir le pack recommandé</span>';
+    result.innerHTML = '<span class="reco-placeholder">Entrez un nombre d\'utilisateurs pour voir le pack recommandé</span>';
     return;
   }
 
@@ -1105,7 +1105,7 @@ function openHistory(filter) {
       </div>
       <div class="history-kpi">
         <div class="history-kpi-num blue">${licencesTotal}</div>
-        <div class="history-kpi-label">Licences simulées</div>
+        <div class="history-kpi-label">Utilisateurs simulés</div>
       </div>
     </div>
 
@@ -1148,7 +1148,7 @@ function openHistory(filter) {
       <div class="history-item" style="flex-wrap:wrap">
         <div class="history-item-info" style="min-width:200px">
           <div class="history-item-title">${s.client || 'Sans nom'} — ${s.pack || ''}</div>
-          <div class="history-item-sub">Devis ${s.numero || '—'} · ${s.date || '—'} · ${s.postes || '?'} postes</div>
+          <div class="history-item-sub">Devis ${s.numero || '—'} · ${s.date || '—'} · ${s.postes || '?'} utilisateurs</div>
           ${status === 'perdu' && s.lostReason ? `<div class="lost-reason">Raison : ${s.lostReason}</div>` : ''}
         </div>
         <div class="history-item-amount" style="min-width:100px">
@@ -1536,7 +1536,7 @@ function buildDevisPacks() {
     div.dataset.unite = uniteLabel;
     div.dataset.type = type;
     const defaultQty = type === 'unit' ? (currentPostes || 1) : 1;
-    const qtyLabel = type === 'unit' ? 'postes' : 'licence(s)';
+    const qtyLabel = type === 'unit' ? 'utilisateurs' : 'licence(s)';
     div.innerHTML = `
       <input type="checkbox" id="${id}" onchange="toggleDevisPack(this)">
       <label class="devis-pack-label" for="${id}">${label}</label>
