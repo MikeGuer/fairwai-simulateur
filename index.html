@@ -863,7 +863,10 @@ function renderTable(tableId, data) {
 }
 
 function selectSurMesureRow(tableId) {
-  document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
+  document.querySelectorAll('.row-selected, .row-recommended').forEach(r => {
+    r.classList.remove('row-selected');
+    r.classList.remove('row-recommended');
+  });
   const smTr = document.getElementById(`sm-row-${tableId}`);
   if (smTr) smTr.classList.add('row-selected');
   // Pré-sélectionner dans le devis
@@ -880,7 +883,11 @@ function selectSurMesureRow(tableId) {
 //  ROW SELECTION (for devis pre-fill)
 // ══════════════════════════════════════════════════
 function selectRow(tableId, rowIndex) {
-  document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
+  // Effacer toute sélection ET toute recommandation sur les 2 tableaux
+  document.querySelectorAll('.row-selected, .row-recommended').forEach(r => {
+    r.classList.remove('row-selected');
+    r.classList.remove('row-recommended');
+  });
   const row = document.querySelector(`#${tableId} tbody tr[data-row-index="${rowIndex}"]`);
   if (row) {
     row.classList.add('row-selected');
