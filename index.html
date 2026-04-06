@@ -800,20 +800,20 @@ footer strong{color:rgba(255,255,255,.8)}
 // ══════════════════════════════════════════════════
 // Packs visibles
 const data360 = [
-  { palier:'15 h',  mensuelAchat:21,    annuelAchat:18,     clientMensuel:29.90,  clientAnnuel:25.90,  userMin:1,  userMax:2  },
-  { palier:'30 h',  mensuelAchat:42,    annuelAchat:35,     clientMensuel:59.90,  clientAnnuel:49.90,  userMin:3,  userMax:5  },
-  { palier:'50 h',  mensuelAchat:64,    annuelAchat:55,     clientMensuel:89.90,  clientAnnuel:79.90,  userMin:6,  userMax:8  },
-  { palier:'75 h',  mensuelAchat:89,    annuelAchat:75.65,  clientMensuel:124.60, clientAnnuel:105.91, userMin:9,  userMax:12 },
-  { palier:'100 h', mensuelAchat:119,   annuelAchat:101.15, clientMensuel:166.60, clientAnnuel:141.61, userMin:13, userMax:16 },
+  { palier:'15 h',  mensuelAchat:21,    annuelAchat:18,     clientMensuel:29.90,  clientAnnuel:25.90,  userMin:1,  userMax:4  },
+  { palier:'30 h',  mensuelAchat:42,    annuelAchat:35,     clientMensuel:59.90,  clientAnnuel:49.90,  userMin:5,  userMax:9  },
+  { palier:'50 h',  mensuelAchat:64,    annuelAchat:55,     clientMensuel:89.90,  clientAnnuel:79.90,  userMin:10, userMax:16 },
+  { palier:'75 h',  mensuelAchat:89,    annuelAchat:75.65,  clientMensuel:124.60, clientAnnuel:105.91, userMin:17, userMax:23 },
+  { palier:'100 h', mensuelAchat:119,   annuelAchat:101.15, clientMensuel:166.60, clientAnnuel:141.61, userMin:24, userMax:30 },
 ];
 const dataVoice = [
-  { palier:'15 h',  mensuelAchat:10.50, annuelAchat:9,      clientMensuel:14.90,  clientAnnuel:12.90,  userMin:1,  userMax:2  },
-  { palier:'30 h',  mensuelAchat:21,    annuelAchat:17.50,  clientMensuel:29.90,  clientAnnuel:24.90,  userMin:3,  userMax:5  },
-  { palier:'50 h',  mensuelAchat:32,    annuelAchat:27.50,  clientMensuel:44.90,  clientAnnuel:39.90,  userMin:6,  userMax:8  },
-  { palier:'75 h',  mensuelAchat:44.50, annuelAchat:37.83,  clientMensuel:62.30,  clientAnnuel:52.96,  userMin:9,  userMax:12 },
-  { palier:'100 h', mensuelAchat:59.50, annuelAchat:50.58,  clientMensuel:83.30,  clientAnnuel:70.80,  userMin:13, userMax:16 },
+  { palier:'15 h',  mensuelAchat:10.50, annuelAchat:9,      clientMensuel:14.90,  clientAnnuel:12.90,  userMin:1,  userMax:4  },
+  { palier:'30 h',  mensuelAchat:21,    annuelAchat:17.50,  clientMensuel:29.90,  clientAnnuel:24.90,  userMin:5,  userMax:9  },
+  { palier:'50 h',  mensuelAchat:32,    annuelAchat:27.50,  clientMensuel:44.90,  clientAnnuel:39.90,  userMin:10, userMax:16 },
+  { palier:'75 h',  mensuelAchat:44.50, annuelAchat:37.83,  clientMensuel:62.30,  clientAnnuel:52.96,  userMin:17, userMax:23 },
+  { palier:'100 h', mensuelAchat:59.50, annuelAchat:50.58,  clientMensuel:83.30,  clientAnnuel:70.80,  userMin:24, userMax:30 },
 ];
-// Tarifs arrière-plan pour "sur mesure" (>16 utilisateurs)
+// Tarifs arrière-plan pour "sur mesure" (>30 utilisateurs)
 const smTiers360 = [
   { label:'200 h', minH:101, maxH:200, mensuelAchat:233.33, annuelAchat:198.33, clientMensuel:326.67, clientAnnuel:277.67 },
   { label:'500 h', minH:201, maxH:1200, mensuelAchat:572.50, annuelAchat:486.63, clientMensuel:801.50, clientAnnuel:681.28 },
@@ -920,10 +920,10 @@ function renderTable(tableId, data) {
     tbody.appendChild(tr);
   });
 
-  // ── Ligne Sur mesure (> 16 utilisateurs) ──
+  // ── Ligne Sur mesure (> 30 utilisateurs) ──
   const sepTr = document.createElement('tr');
   sepTr.style.cssText = 'background:var(--bg)!important;cursor:default';
-  sepTr.innerHTML = `<td colspan="5" style="padding:4px 24px;font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;border-top:2px solid var(--border)">Sur mesure — au-delà de 16 utilisateurs (base 6h/user/mois)</td>`;
+  sepTr.innerHTML = `<td colspan="5" style="padding:4px 24px;font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;border-top:2px solid var(--border)">Sur mesure — au-delà de 30 utilisateurs (base 5h/user/mois)</td>`;
   tbody.appendChild(sepTr);
 
   const smTr = document.createElement('tr');
@@ -931,7 +931,7 @@ function renderTable(tableId, data) {
   smTr.classList.add('row-sur-mesure');
   smTr.onclick = () => selectSurMesureRow(tableId);
 
-  const smHours = currentPostes && currentPostes > 16 ? currentPostes * 6 : null;
+  const smHours = currentPostes && currentPostes > 30 ? currentPostes * 5 : null;
   const smResult = smHours ? getSurMesurePrice(smTiersData, smHours, isAnnual) : null;
 
   if (smResult) {
@@ -973,7 +973,7 @@ function renderTable(tableId, data) {
   } else {
     smTr.innerHTML = `
       <td colspan="5" style="padding:14px 24px;color:var(--text-light);font-size:12px;font-style:italic">
-        Saisissez plus de 16 utilisateurs pour afficher le tarif sur mesure
+        Saisissez plus de 30 utilisateurs pour afficher le tarif sur mesure
       </td>`;
   }
   tbody.appendChild(smTr);
@@ -987,7 +987,7 @@ function selectSurMesureRow(tableId) {
   const smTr = document.getElementById(`sm-row-${tableId}`);
   if (smTr) smTr.classList.add('row-selected');
   // Pré-sélectionner dans le devis
-  const smHours = currentPostes && currentPostes > 16 ? currentPostes * 6 : null;
+  const smHours = currentPostes && currentPostes > 30 ? currentPostes * 5 : null;
   const smTiersData = tableId === 'table360' ? smTiers360 : smTiersVoice;
   const smResult = smHours ? getSurMesurePrice(smTiersData, smHours, billing === 'annuel') : null;
   if (smResult) {
@@ -1070,11 +1070,11 @@ function applyHighlightAndBadge() {
   const u = currentPostes;
   let rowIndex = null, packLabel, isSurMesure = false;
 
-  if      (u <= 2)  { rowIndex = 0; packLabel = 'Pack - 15h'; }
-  else if (u <= 5)  { rowIndex = 1; packLabel = 'Pack - 30h'; }
-  else if (u <= 8)  { rowIndex = 2; packLabel = 'Pack - 50h'; }
-  else if (u <= 12) { rowIndex = 3; packLabel = 'Pack - 75h'; }
-  else if (u <= 16) { rowIndex = 4; packLabel = 'Pack - 100h'; }
+  if      (u <= 4)  { rowIndex = 0; packLabel = 'Pack - 15h'; }
+  else if (u <= 9)  { rowIndex = 1; packLabel = 'Pack - 30h'; }
+  else if (u <= 16) { rowIndex = 2; packLabel = 'Pack - 50h'; }
+  else if (u <= 23) { rowIndex = 3; packLabel = 'Pack - 75h'; }
+  else if (u <= 30) { rowIndex = 4; packLabel = 'Pack - 100h'; }
   else              { isSurMesure = true; packLabel = 'Sur mesure'; }
 
   if (!isSurMesure) {
@@ -1093,7 +1093,7 @@ function applyHighlightAndBadge() {
       const smRow = document.getElementById(`sm-row-${tableId}`);
       if (smRow) smRow.classList.add('row-recommended');
     });
-    const heures = u * 6;
+    const heures = u * 5;
     // Auto-set selectedPack for sur mesure
     const activeTab = document.getElementById('tab360').classList.contains('active') ? 'table360' : 'tableVoice';
     const smTiersData = activeTab === 'table360' ? smTiers360 : smTiersVoice;
@@ -1104,7 +1104,7 @@ function applyHighlightAndBadge() {
     if (heures > 1200) {
       result.innerHTML = `<span class="reco-badge reco-badge-custom">Sur demande — ${u} utilisateurs · ${heures}h estimées</span>`;
     } else {
-      result.innerHTML = `<span class="reco-badge reco-badge-custom">Sur mesure — ${u} utilisateurs · ${heures}h estimées (6h/user)</span>`;
+      result.innerHTML = `<span class="reco-badge reco-badge-custom">Sur mesure — ${u} utilisateurs · ${heures}h estimées (5h/user)</span>`;
     }
   }
 }
@@ -1759,8 +1759,8 @@ function buildDevisPacks() {
     container.appendChild(makeItem(id, label, achat * (1 + marginPct / 100)));
   });
   // Sur mesure 360
-  if (currentPostes && currentPostes > 16) {
-    const hours = currentPostes * 6;
+  if (currentPostes && currentPostes > 30) {
+    const hours = currentPostes * 5;
     const sm = getSurMesurePrice(smTiers360, hours, devisBilling === 'annuel');
     if (sm) {
       const label = `Pack 360 - Sur mesure (${currentPostes} utilisateurs · ${hours}h)`;
@@ -1776,8 +1776,8 @@ function buildDevisPacks() {
     container.appendChild(makeItem(id, label, achat * (1 + marginPct / 100)));
   });
   // Sur mesure Voice
-  if (currentPostes && currentPostes > 16) {
-    const hours = currentPostes * 6;
+  if (currentPostes && currentPostes > 30) {
+    const hours = currentPostes * 5;
     const sm = getSurMesurePrice(smTiersVoice, hours, devisBilling === 'annuel');
     if (sm) {
       const label = `Pack Voice - Sur mesure (${currentPostes} utilisateurs · ${hours}h)`;
@@ -2199,13 +2199,13 @@ function updateSavingsBanner() {
 
   // ── Prix Fairwai (pack recommandé pour ce nombre d'utilisateurs) ──
   let fairwaiAchat = null;
-  if      (u <= 2)  { fairwaiAchat = isAnnual ? data360[0].annuelAchat : data360[0].mensuelAchat; }
-  else if (u <= 5)  { fairwaiAchat = isAnnual ? data360[1].annuelAchat : data360[1].mensuelAchat; }
-  else if (u <= 8)  { fairwaiAchat = isAnnual ? data360[2].annuelAchat : data360[2].mensuelAchat; }
-  else if (u <= 12) { fairwaiAchat = isAnnual ? data360[3].annuelAchat : data360[3].mensuelAchat; }
-  else if (u <= 16) { fairwaiAchat = isAnnual ? data360[4].annuelAchat : data360[4].mensuelAchat; }
+  if      (u <= 4)  { fairwaiAchat = isAnnual ? data360[0].annuelAchat : data360[0].mensuelAchat; }
+  else if (u <= 9)  { fairwaiAchat = isAnnual ? data360[1].annuelAchat : data360[1].mensuelAchat; }
+  else if (u <= 16) { fairwaiAchat = isAnnual ? data360[2].annuelAchat : data360[2].mensuelAchat; }
+  else if (u <= 23) { fairwaiAchat = isAnnual ? data360[3].annuelAchat : data360[3].mensuelAchat; }
+  else if (u <= 30) { fairwaiAchat = isAnnual ? data360[4].annuelAchat : data360[4].mensuelAchat; }
   else {
-    const hours = u * 6;
+    const hours = u * 5;
     const smResult = getSurMesurePrice(smTiers360, hours, isAnnual);
     if (smResult) fairwaiAchat = smResult.achat;
   }
