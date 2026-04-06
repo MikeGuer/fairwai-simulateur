@@ -7,138 +7,128 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#EDEAE4; --bg-card:#F7F5F1; --white:#FFFFFF; --black:#111;
-  --text:#1A1A1A; --text-mid:#4A4A4A; --text-light:#888880;
-  --border:#DEDAD3; --border-light:#E8E4DE;
-  --accent:#3452FF; --accent-mid:#2540E8; --accent-light:#EEF0FF; --accent-text:#2032C4;
-  --green:#18A558; --green-light:#E8F7EF;
-  --gold:#C97B0A; --gold-light:#FEF3DC;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.06); --shadow:0 2px 12px rgba(0,0,0,.07);
-  --radius:12px; --radius-lg:16px;
+  --bg:#F5F5F7; --bg-card:#FFFFFF; --bg-secondary:#FAFAFA; --white:#FFFFFF; --black:#1D1D1F;
+  --text:#1D1D1F; --text-mid:#3A3A3C; --text-light:#86868B; --text-xlight:#AEAEB2;
+  --border:#D2D2D7; --border-light:#E8E8ED;
+  --accent:#3452FF; --accent-mid:#2440EE; --accent-light:#F0F1FF; --accent-text:#1E35CC;
+  --green:#28CD53; --green-dark:#1FA842; --green-light:#F2FBF5;
+  --gold:#FF9500; --gold-light:#FFF5E6;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04),0 2px 8px rgba(0,0,0,.04);
+  --shadow:0 2px 12px rgba(0,0,0,.06),0 4px 24px rgba(0,0,0,.05);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.10),0 2px 8px rgba(0,0,0,.04);
+  --radius:12px; --radius-lg:16px; --radius-xl:22px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
 
 /* ── HEADER ── */
-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.header-inner{max-width:1200px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;gap:24px}
+header{background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border-light);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1280px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:60px;gap:24px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
-.logo-text{font-size:24px;font-weight:800;color:var(--black);letter-spacing:-1px}
+.logo-text{font-size:22px;font-weight:800;color:var(--black);letter-spacing:-1px}
 .logo-text span{color:var(--accent)}
-.header-title{flex:1;text-align:center;font-size:17px;font-weight:600;color:var(--text-mid);letter-spacing:-.2px}
-.header-title em{color:var(--text);font-style:normal;font-weight:700}
+.header-title{flex:1;text-align:center;font-size:15px;font-weight:600;color:var(--text-light);letter-spacing:-.1px}
+.header-title em{color:var(--text-mid);font-style:normal;font-weight:600}
 
-/* Portfolio + Espace — bloc unifié Apple-style */
-.header-right{display:flex;align-items:center;gap:0;background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.portfolio-box{display:flex;align-items:center;gap:16px;padding:0 18px;height:44px;background:#FFFCF2;border-right:1px solid #F0E8C8;flex-shrink:0}
-.portfolio-kpi{display:flex;flex-direction:column;gap:0}
-.portfolio-val{font-size:14px;font-weight:700;line-height:1.3;letter-spacing:-.3px}
+/* Portfolio + Espace */
+.header-right{display:flex;align-items:center;gap:0;background:var(--white);border:1px solid var(--border-light);border-radius:14px;overflow:hidden;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.portfolio-box{display:flex;align-items:center;gap:18px;padding:0 20px;height:40px;border-right:1px solid var(--border-light);flex-shrink:0}
+.portfolio-kpi{display:flex;flex-direction:column;gap:1px}
+.portfolio-val{font-size:13px;font-weight:700;line-height:1.2;letter-spacing:-.3px}
 .portfolio-val.ca{color:var(--accent)}
-.portfolio-val.gain{color:var(--green)}
-.portfolio-label{font-size:9px;color:var(--text-light);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-.portfolio-sep{width:1px;height:24px;background:rgba(200,185,140,.5)}
+.portfolio-val.gain{color:var(--green-dark)}
+.portfolio-label{font-size:9px;color:var(--text-xlight);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.portfolio-sep{width:1px;height:18px;background:var(--border-light)}
 .portfolio-title{display:none}
 .portfolio-row{display:contents}
 
 /* Espace commercial */
-.espace-box{display:flex;align-items:center;gap:8px;padding:0 16px;height:44px;cursor:pointer;transition:background .12s;flex-shrink:0}
-.espace-box:hover{background:var(--bg-card)}
+.espace-box{display:flex;align-items:center;gap:8px;padding:0 16px;height:40px;cursor:pointer;transition:background .15s;flex-shrink:0}
+.espace-box:hover{background:var(--bg)}
 .espace-inner{display:flex;flex-direction:column}
-.espace-label{font-size:9px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;line-height:1}
+.espace-label{font-size:9px;font-weight:500;color:var(--text-xlight);text-transform:uppercase;letter-spacing:.5px;line-height:1}
 .espace-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.4}
-.espace-chevron{font-size:14px;color:var(--text-light);flex-shrink:0}
+.espace-chevron{font-size:12px;color:var(--text-xlight);flex-shrink:0}
 
 /* ── TAB NAV ── */
-.tab-nav{background:var(--bg);border-bottom:1px solid var(--border);padding:8px 0;position:sticky;top:68px;z-index:90}
-.tab-nav-inner{max-width:1200px;margin:0 auto;padding:0 40px;display:flex;gap:12px;justify-content:center}
-.tab-btn{flex:1;max-width:280px;padding:10px 20px;border:2px solid var(--border);background:var(--white);border-radius:var(--radius-lg);font-size:15px;font-weight:700;color:var(--text-mid);cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:12px;font-family:inherit;box-shadow:var(--shadow-sm)}
-.tab-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px);box-shadow:var(--shadow)}
-.tab-btn.active{border-color:var(--accent);background:var(--accent);color:var(--white);box-shadow:0 4px 16px rgba(52,82,255,.3)}
-.tab-btn-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.15);flex-shrink:0}
-.tab-btn:not(.active) .tab-btn-icon{background:var(--bg-card)}
+.tab-nav{background:var(--bg);border-bottom:1px solid var(--border-light);padding:10px 0;position:sticky;top:60px;z-index:90}
+.tab-nav-inner{max-width:1280px;margin:0 auto;padding:0 40px;display:flex;gap:10px;justify-content:center}
+.tab-btn{flex:1;max-width:260px;padding:10px 20px;border:1.5px solid var(--border-light);background:var(--white);border-radius:14px;font-size:14px;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .2s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:12px;font-family:inherit;box-shadow:var(--shadow-sm)}
+.tab-btn:hover{border-color:var(--accent);color:var(--text);box-shadow:var(--shadow)}
+.tab-btn.active{border-color:transparent;background:var(--accent);color:var(--white);box-shadow:0 4px 20px rgba(52,82,255,.28)}
+.tab-btn-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;background:rgba(255,255,255,.15);flex-shrink:0}
+.tab-btn:not(.active) .tab-btn-icon{background:var(--bg)}
 .tab-btn-text{text-align:left}
-.tab-btn-title{display:block;font-size:15px;font-weight:700;line-height:1.2}
-.tab-btn-sub{display:block;font-size:11px;font-weight:500;opacity:.7;margin-top:2px}
+.tab-btn-title{display:block;font-size:14px;font-weight:700;line-height:1.2}
+.tab-btn-sub{display:block;font-size:11px;font-weight:400;opacity:.65;margin-top:2px}
 
 /* ── SIM BAR ── */
-.sim-bar{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:122px;z-index:80}
-.sim-inner{max-width:1200px;margin:0 auto;padding:12px 40px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
-.sim-label{font-size:12px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
-.sim-controls{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.sim-bar{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border-light);position:sticky;top:114px;z-index:80}
+.sim-inner{max-width:1280px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.sim-label{font-size:11px;font-weight:600;color:var(--text-xlight);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap}
+.sim-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .margin-input-wrap{display:flex;align-items:center;gap:10px}
-.margin-input-wrap label{font-size:13px;font-weight:600;color:var(--text-mid)}
-.margin-range{-webkit-appearance:none;width:140px;height:4px;border-radius:2px;background:var(--border);outline:none;cursor:pointer}
-.margin-range::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 1px 6px rgba(52,82,255,.35)}
-.margin-num{width:62px;padding:5px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-weight:700;color:var(--accent);text-align:center;outline:none;font-family:inherit;background:var(--white)}
-.margin-num:focus{border-color:var(--accent)}
-.sim-info{margin-left:auto;font-size:12px;color:var(--text-light)}
+.margin-input-wrap label{font-size:13px;font-weight:500;color:var(--text-mid)}
+.margin-range{-webkit-appearance:none;width:120px;height:3px;border-radius:2px;background:var(--border-light);outline:none;cursor:pointer}
+.margin-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 1px 6px rgba(52,82,255,.3)}
+.margin-num{width:56px;padding:5px 8px;border:1.5px solid var(--border-light);border-radius:8px;font-size:14px;font-weight:700;color:var(--accent);text-align:center;outline:none;font-family:inherit;background:var(--white);transition:border-color .15s}
+.margin-num:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(52,82,255,.1)}
+.sim-info{margin-left:auto;font-size:12px;color:var(--text-xlight)}
 .sim-info span{font-weight:700;color:var(--accent)}
 
-/* Toggle */
-.toggle-billing{display:flex;background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:3px;gap:3px}
-.toggle-billing button{padding:7px 18px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--accent);background:transparent;font-family:inherit}
-.toggle-billing button.active{background:var(--accent);color:var(--white);box-shadow:0 2px 8px rgba(52,82,255,.3)}
+/* Toggle Mensuel/Annuel — segment control Apple-style */
+.toggle-billing{display:flex;background:var(--bg);border:1px solid var(--border-light);border-radius:10px;padding:3px;gap:2px}
+.toggle-billing button{padding:6px 16px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;color:var(--text-light);background:transparent;font-family:inherit}
+.toggle-billing button.active{background:var(--white);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,.10),0 1px 2px rgba(0,0,0,.06)}
 
 /* ── RECO BAR ── */
-.reco-bar{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:178px;z-index:70}
-.reco-inner{max-width:1200px;margin:0 auto;padding:14px 40px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.reco-bar{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border-light);position:sticky;top:178px;z-index:70}
+.reco-inner{max-width:1280px;margin:0 auto;padding:12px 40px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
 .reco-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.reco-label{font-size:13px;font-weight:600;color:var(--text-mid);white-space:nowrap}
-.reco-input-wrap{display:flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:5px 10px}
+.reco-label{font-size:13px;font-weight:500;color:var(--text-mid);white-space:nowrap}
+.reco-input-wrap{display:flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border-light);border-radius:10px;padding:5px 12px;transition:border-color .15s}
+.reco-input-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(52,82,255,.08)}
 .reco-input{width:64px;border:none;background:transparent;font-size:15px;font-weight:700;color:var(--text);font-family:inherit;outline:none;text-align:center}
-.reco-unit{font-size:12px;font-weight:600;color:var(--text-light)}
+.reco-unit{font-size:12px;font-weight:500;color:var(--text-light)}
 .reco-result{flex:1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.reco-placeholder{font-size:13px;color:var(--text-light);font-style:italic}
-.reco-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;border-radius:8px;padding:5px 14px}
+.reco-placeholder{font-size:13px;color:var(--text-xlight);font-style:normal}
+.reco-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;border-radius:20px;padding:4px 14px;letter-spacing:.1px}
 .reco-badge-custom{background:var(--gold)}
 
 /* Telephony option */
 .telco-option{display:flex;align-items:center;gap:10px;margin-left:auto}
-.telco-label{font-size:12px;font-weight:600;color:var(--text-mid);white-space:nowrap}
-.telco-check{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.telco-label{font-size:12px;font-weight:500;color:var(--text-mid);white-space:nowrap}
+.telco-check{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
 .telco-price-wrap{display:flex;align-items:center;gap:4px}
-.telco-price-input{width:56px;padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;text-align:center;font-family:inherit;color:var(--accent);background:var(--white)}
-.telco-price-input:focus{border-color:var(--accent);outline:none}
+.telco-price-input{width:56px;padding:4px 8px;border:1.5px solid var(--border-light);border-radius:8px;font-size:13px;font-weight:700;text-align:center;font-family:inherit;color:var(--accent);background:var(--white);transition:border-color .15s}
+.telco-price-input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(52,82,255,.08)}
 
 /* ── MAIN ── */
-main{max-width:1200px;margin:0 auto;padding:16px 40px 80px}
-.section-header{margin-bottom:16px;padding:16px 20px;background:var(--white);border-radius:var(--radius);border-left:4px solid var(--accent);box-shadow:var(--shadow-sm)}
-.section-title{font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.5px}
-.section-subtitle{font-size:13px;font-weight:500;color:var(--text-mid);margin-top:3px}
+main{max-width:1280px;margin:0 auto;padding:24px 40px 100px}
+.section-header{margin-bottom:16px;padding:18px 24px;background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-light)}
+.section-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.4px}
+.section-subtitle{font-size:13px;font-weight:400;color:var(--text-light);margin-top:3px}
 .tab-page{display:none}
 .tab-page.active{display:block}
 
 /* ── TABLE ── */
-.table-wrap{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);overflow-x:auto;margin-bottom:20px}
-.table-title{padding:16px 24px;font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border-light)}
-.table-title-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--bg-card);color:var(--text-light);border:1px solid var(--border)}
+.table-wrap{background:var(--white);border-radius:var(--radius-xl);border:1px solid var(--border-light);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.table-title{padding:18px 28px;font-size:13px;font-weight:600;color:var(--text-mid);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border-light)}
+.table-title-badge{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--bg);color:var(--text-xlight);border:1px solid var(--border-light)}
 table{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
-thead tr{background:var(--bg-card)}
-thead th{padding:11px 18px;text-align:left;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;white-space:normal;line-height:1.3;vertical-align:bottom;border-bottom:1px solid var(--border-light)}
-thead th:first-child{padding-left:24px}
-tbody tr{border-bottom:1px solid var(--border-light);transition:background .12s;cursor:pointer}
+thead tr{background:var(--bg)}
+thead th{padding:10px 20px;text-align:left;font-size:10px;font-weight:600;color:var(--text-xlight);text-transform:uppercase;letter-spacing:.7px;white-space:normal;line-height:1.4;vertical-align:bottom;border-bottom:1px solid var(--border-light)}
+thead th:first-child{padding-left:28px}
+tbody tr{border-bottom:1px solid var(--border-light);transition:background .15s;cursor:pointer}
 tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:var(--bg-card)}
-tbody td{padding:14px 18px;vertical-align:middle}
-tbody td:first-child{padding-left:24px}
-.palier-badge{display:inline-flex;align-items:center;background:var(--text);color:var(--white);padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700}
+tbody tr:hover{background:var(--bg)}
+tbody td{padding:16px 20px;vertical-align:middle}
+tbody td:first-child{padding-left:28px}
+.palier-badge{display:inline-flex;align-items:center;background:var(--black);color:var(--white);padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.1px}
 
-/* Column highlights */
-/* Col 2: Prix achat */
-thead th:nth-child(2){color:var(--text);background:#F0EDE8}
-tbody td:nth-child(2){background:#F7F5F1;border-left:2px solid var(--border);border-right:2px solid var(--border)}
-/* Col 3: Client/poste */
-thead th:nth-child(3){color:var(--green);background:#F4FCF7}
-tbody td:nth-child(3){background:#F9FDF9}
-/* Col 4: Prix client suggéré */
-thead th:nth-child(4){color:var(--green);background:#EFF9F4}
-tbody td:nth-child(4){background:#F4FCF7;border-left:2px solid #C5E8D5;border-right:2px solid #C5E8D5}
-/* Col 5: Gain */
-thead th:nth-child(5){color:var(--accent-text);background:#EEF0FF}
-tbody td:nth-child(5){background:#F5F7FF;border-left:1px solid #C7CCFF;border-right:1px solid #C7CCFF}
+/* Row highlight — clean Apple-style (left accent bar only) */
+.row-recommended{box-shadow:inset 4px 0 0 var(--accent);background:var(--accent-light)!important}
 
-/* Row highlight */
-.row-recommended{box-shadow:inset 5px 0 0 var(--accent);background:#EEF1FF!important;outline:2px solid rgba(52,82,255,.25);outline-offset:-1px}
 .row-recommended td{font-weight:700!important}
 .row-selected{box-shadow:inset 5px 0 0 var(--green);background:#F0FFF5!important;outline:2px solid rgba(24,165,88,.3);outline-offset:-1px}
 .reco-star{font-size:10px;font-weight:700;background:var(--accent);color:#fff;border-radius:4px;padding:2px 5px;letter-spacing:.3px;vertical-align:middle;margin-left:4px}
@@ -344,6 +334,48 @@ tbody td:nth-child(5){background:#F5F7FF;border-left:1px solid #C7CCFF;border-ri
 .actions-menu-item.danger{color:#E53E3E}
 .actions-menu-item.danger:hover{background:#FFF5F5}
 
+/* ── ONBOARDING POPUP ── */
+.onboarding-overlay{display:flex;position:fixed;inset:0;background:rgba(10,10,20,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:600;align-items:center;justify-content:center;padding:20px}
+.onboarding-overlay.hidden{display:none}
+.onboarding-modal{background:#fff;border-radius:28px;padding:48px 44px 40px;width:100%;max-width:620px;box-shadow:0 40px 100px rgba(0,0,0,.28);text-align:center;animation:obIn .32s cubic-bezier(.22,1,.36,1)}
+@keyframes obIn{from{transform:translateY(24px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.ob-logo{font-size:22px;font-weight:800;letter-spacing:-1px;color:#111;margin-bottom:28px}
+.ob-logo span{color:var(--accent)}
+.ob-title{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.5px;margin-bottom:8px}
+.ob-subtitle{font-size:15px;color:var(--text-mid);margin-bottom:32px;font-weight:500}
+.ob-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px}
+.ob-cards-3col{grid-template-columns:1fr 1fr 1fr}
+.ob-card{background:#F7F5F1;border:2px solid var(--border);border-radius:18px;padding:26px 16px;cursor:pointer;transition:all .18s cubic-bezier(.22,1,.36,1);text-align:center;user-select:none}
+.ob-card:hover{border-color:var(--accent);background:var(--accent-light);transform:translateY(-3px);box-shadow:0 10px 28px rgba(52,82,255,.18)}
+.ob-card:active{transform:translateY(-1px)}
+.ob-card-icon{font-size:38px;margin-bottom:12px;line-height:1}
+.ob-card-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:5px}
+.ob-card-desc{font-size:12px;color:var(--text-light);font-weight:500;line-height:1.4}
+.ob-card-sm{padding:16px 12px}
+.ob-card-sm .ob-card-title{font-size:14px}
+.ob-card-sm .ob-card-icon{font-size:24px;margin-bottom:8px}
+.ob-card-none{border-style:dashed;background:transparent}
+.ob-card-none:hover{background:var(--bg-card)}
+.ob-step-dots{display:flex;justify-content:center;gap:6px;margin-bottom:28px}
+.ob-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.ob-dot.active{background:var(--accent);width:20px;border-radius:3px}
+.ob-back{margin-top:18px;background:none;border:none;font-size:13px;color:var(--text-light);cursor:pointer;font-family:inherit;font-weight:600;padding:8px 14px;border-radius:8px;transition:all .15s}
+.ob-back:hover{color:var(--text);background:var(--bg)}
+
+/* ── SAVINGS BAR ── */
+.savings-bar{background:linear-gradient(90deg,#0F1629,#1A2040);border-bottom:1px solid rgba(52,82,255,.25);position:sticky;z-index:65}
+.savings-inner{max-width:1200px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.savings-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;flex-wrap:wrap}
+.savings-prefix{font-size:13px;color:rgba(255,255,255,.6);font-weight:600;white-space:nowrap}
+.savings-competitor{font-size:14px;font-weight:800;color:#fff;white-space:nowrap}
+.savings-note{font-size:11px;color:rgba(255,255,255,.35);font-weight:500;white-space:nowrap}
+.savings-pills{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.savings-pill{padding:5px 14px;border-radius:20px;font-size:13px;font-weight:800;white-space:nowrap;border:1px solid}
+.savings-pill.green{background:rgba(24,165,88,.2);border-color:rgba(24,165,88,.45);color:#6FFFB0}
+.savings-pill.red{background:rgba(229,62,62,.15);border-color:rgba(229,62,62,.35);color:#FC8181}
+.savings-change-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.55);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.savings-change-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+
 /* ── PRINT ── */
 @media print{body>*:not(#printDevis){display:none!important}#printDevis{display:block!important;padding:0;margin:0}@page{margin:15mm;size:A4}}
 #printDevis{display:none}
@@ -451,15 +483,20 @@ footer strong{color:rgba(255,255,255,.8)}
     <div class="reco-result" id="recoResult">
       <span class="reco-placeholder">Entrez un nombre d'utilisateurs pour voir le pack recommandé</span>
     </div>
-    <div class="telco-option">
-      <input type="checkbox" id="telcoCheck" class="telco-check" onchange="updateAll()">
-      <label class="telco-label" for="telcoCheck">+ Téléphonie</label>
+    <div class="telco-option" id="telcoOption" style="display:none">
+      <input type="checkbox" id="telcoCheck" class="telco-check" onchange="updateSavingsBanner()">
+      <label class="telco-label" for="telcoCheck">Télécom concurrent</label>
       <div class="telco-price-wrap">
-        <input type="number" id="telcoPrice" class="telco-price-input" value="7.00" min="0" step="0.5" oninput="updateAll()">
+        <input type="number" id="telcoPrice" class="telco-price-input" value="15" min="0" step="0.5" oninput="updateSavingsBanner()">
         <span style="font-size:11px;color:var(--text-light);font-weight:600">€/poste</span>
       </div>
     </div>
   </div>
+</div>
+
+<!-- ═══ SAVINGS BAR ═══ -->
+<div class="savings-bar" id="savingsBar" style="display:none">
+  <div class="savings-inner" id="savingsInner"></div>
 </div>
 
 <!-- ═══ MAIN ═══ -->
@@ -482,8 +519,8 @@ footer strong{color:rgba(255,255,255,.8)}
           <tr>
             <th>Palier</th>
             <th>Prix d'achat<br>revendeur mensuel HT</th>
-            <th>Client / poste HT</th>
-            <th>Prix réf. Client<br>final mensuel HT</th>
+            <th>IA / utilisateur HT</th>
+            <th>Prix de vente<br>client pool HT</th>
             <th id="gainLabel360">Marge annuelle revendeur</th>
           </tr>
         </thead>
@@ -498,7 +535,7 @@ footer strong{color:rgba(255,255,255,.8)}
     <div class="custom-offer">
       <div class="custom-offer-text">
         <h3>Besoin d'une offre sur mesure ?</h3>
-        <p>Au-delà de 500h, nos équipes construisent une offre personnalisée.</p>
+        <p>Au-delà de 1 200h, nos équipes construisent une offre sur demande.</p>
       </div>
       <button class="btn-contact" onclick="window.location.href='mailto:contact@fairw.ai'">Contacter l'équipe</button>
     </div>
@@ -521,8 +558,8 @@ footer strong{color:rgba(255,255,255,.8)}
           <tr>
             <th>Palier</th>
             <th>Prix d'achat<br>revendeur mensuel HT</th>
-            <th>Client / poste HT</th>
-            <th>Prix réf. Client<br>final mensuel HT</th>
+            <th>IA / utilisateur HT</th>
+            <th>Prix de vente<br>client pool HT</th>
             <th id="gainLabelVoice">Marge annuelle revendeur</th>
           </tr>
         </thead>
@@ -537,7 +574,7 @@ footer strong{color:rgba(255,255,255,.8)}
     <div class="custom-offer">
       <div class="custom-offer-text">
         <h3>Besoin d'une offre sur mesure ?</h3>
-        <p>Au-delà de 500h, nos équipes construisent une offre personnalisée.</p>
+        <p>Au-delà de 1 200h, nos équipes construisent une offre sur demande.</p>
       </div>
       <button class="btn-contact" onclick="window.location.href='mailto:contact@fairw.ai'">Contacter l'équipe</button>
     </div>
@@ -632,8 +669,8 @@ footer strong{color:rgba(255,255,255,.8)}
         <div class="devis-billing-row">
           <span class="devis-billing-label">Facturation</span>
           <div class="devis-billing-toggle">
-            <button class="dv-btn-billing active" id="dv-billing-annuel" onclick="setDevisBilling('annuel')">Annuel</button>
             <button class="dv-btn-billing" id="dv-billing-mensuel" onclick="setDevisBilling('mensuel')">Mensuel</button>
+            <button class="dv-btn-billing active" id="dv-billing-annuel" onclick="setDevisBilling('annuel')">Annuel</button>
           </div>
         </div>
 
@@ -682,6 +719,74 @@ footer strong{color:rgba(255,255,255,.8)}
   </div>
 </div>
 
+<!-- ═══ ONBOARDING POPUP ═══ -->
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-modal">
+
+    <!-- Étape 1 : Type d'offre -->
+    <div id="ob-step1">
+      <div class="ob-logo">fairw<span>.ai</span></div>
+      <div class="ob-step-dots"><div class="ob-dot active"></div><div class="ob-dot"></div></div>
+      <h2 class="ob-title">Bonjour 👋</h2>
+      <p class="ob-subtitle">Quelle offre cherchez-vous pour votre prospect ?</p>
+      <div class="ob-cards">
+        <div class="ob-card" onclick="selectOfferType('ia')">
+          <div class="ob-card-icon">🧠</div>
+          <div class="ob-card-title">IA uniquement</div>
+          <div class="ob-card-desc">Transcription, résumés et analyses des échanges clients</div>
+        </div>
+        <div class="ob-card" onclick="selectOfferType('ia+telco')">
+          <div class="ob-card-icon">📞</div>
+          <div class="ob-card-title">IA + Téléphonie</div>
+          <div class="ob-card-desc">Solution tout-en-un : intelligence artificielle et voix intégrée</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Étape 2 : Concurrent -->
+    <div id="ob-step2" style="display:none">
+      <div class="ob-logo">fairw<span>.ai</span></div>
+      <div class="ob-step-dots"><div class="ob-dot"></div><div class="ob-dot active"></div></div>
+      <h2 class="ob-title">Contexte concurrentiel</h2>
+      <p class="ob-subtitle">Vous êtes en face de qui ?</p>
+      <div class="ob-cards ob-cards-3col">
+        <div class="ob-card ob-card-sm" id="ob-card-leexi" onclick="selectCompetitor('leexi')">
+          <div class="ob-card-icon">🎯</div>
+          <div class="ob-card-title">Leexi</div>
+          <div class="ob-card-desc">€23/user/mois</div>
+        </div>
+        <div class="ob-card ob-card-sm" id="ob-card-noota" onclick="selectCompetitor('noota')">
+          <div class="ob-card-icon">📝</div>
+          <div class="ob-card-title">Noota</div>
+          <div class="ob-card-desc">€29/user/mois</div>
+        </div>
+        <div class="ob-card ob-card-sm" id="ob-card-copilot" onclick="selectCompetitor('copilot')">
+          <div class="ob-card-icon">🤖</div>
+          <div class="ob-card-title">Copilot</div>
+          <div class="ob-card-desc">€23,60/user/mois</div>
+        </div>
+        <div class="ob-card ob-card-sm" id="ob-card-ringover" onclick="selectCompetitor('ringover')">
+          <div class="ob-card-icon">📱</div>
+          <div class="ob-card-title">Ringover</div>
+          <div class="ob-card-desc" id="ob-ringover-desc">€83/user/mois</div>
+        </div>
+        <div class="ob-card ob-card-sm" id="ob-card-aircall" onclick="selectCompetitor('aircall')">
+          <div class="ob-card-icon">☁️</div>
+          <div class="ob-card-title">Aircall</div>
+          <div class="ob-card-desc" id="ob-aircall-desc">€99/user/mois</div>
+        </div>
+        <div class="ob-card ob-card-sm ob-card-none" onclick="selectCompetitor('none')">
+          <div class="ob-card-icon">✨</div>
+          <div class="ob-card-title">Aucun concurrent</div>
+          <div class="ob-card-desc">Appel d'offre direct</div>
+        </div>
+      </div>
+      <button class="ob-back" onclick="goToStep1()">← Retour</button>
+    </div>
+
+  </div>
+</div>
+
 <div id="printDevis"></div>
 
 <footer>
@@ -695,27 +800,27 @@ footer strong{color:rgba(255,255,255,.8)}
 // ══════════════════════════════════════════════════
 // Packs visibles
 const data360 = [
-  { palier:'15 h',  mensuelAchat:21,    annuelAchat:18,     clientMensuel:29.90,  clientAnnuel:25.90,  userMin:2,  userMax:5  },
-  { palier:'30 h',  mensuelAchat:42,    annuelAchat:35,     clientMensuel:59.90,  clientAnnuel:49.90,  userMin:6,  userMax:10 },
-  { palier:'50 h',  mensuelAchat:64,    annuelAchat:55,     clientMensuel:89.90,  clientAnnuel:79.90,  userMin:11, userMax:16 },
-  { palier:'75 h',  mensuelAchat:89,    annuelAchat:75.65,  clientMensuel:124.60, clientAnnuel:105.91, userMin:17, userMax:25 },
-  { palier:'100 h', mensuelAchat:119,   annuelAchat:101.15, clientMensuel:166.60, clientAnnuel:141.61, userMin:26, userMax:33 },
+  { palier:'15 h',  mensuelAchat:21,    annuelAchat:18,     clientMensuel:29.90,  clientAnnuel:25.90,  userMin:1,  userMax:2  },
+  { palier:'30 h',  mensuelAchat:42,    annuelAchat:35,     clientMensuel:59.90,  clientAnnuel:49.90,  userMin:3,  userMax:5  },
+  { palier:'50 h',  mensuelAchat:64,    annuelAchat:55,     clientMensuel:89.90,  clientAnnuel:79.90,  userMin:6,  userMax:8  },
+  { palier:'75 h',  mensuelAchat:89,    annuelAchat:75.65,  clientMensuel:124.60, clientAnnuel:105.91, userMin:9,  userMax:12 },
+  { palier:'100 h', mensuelAchat:119,   annuelAchat:101.15, clientMensuel:166.60, clientAnnuel:141.61, userMin:13, userMax:16 },
 ];
 const dataVoice = [
-  { palier:'15 h',  mensuelAchat:10.50, annuelAchat:9,      clientMensuel:14.90,  clientAnnuel:12.90,  userMin:2,  userMax:5  },
-  { palier:'30 h',  mensuelAchat:21,    annuelAchat:17.50,  clientMensuel:29.90,  clientAnnuel:24.90,  userMin:6,  userMax:10 },
-  { palier:'50 h',  mensuelAchat:32,    annuelAchat:27.50,  clientMensuel:44.90,  clientAnnuel:39.90,  userMin:11, userMax:16 },
-  { palier:'75 h',  mensuelAchat:44.50, annuelAchat:37.83,  clientMensuel:62.30,  clientAnnuel:52.96,  userMin:17, userMax:25 },
-  { palier:'100 h', mensuelAchat:59.50, annuelAchat:50.58,  clientMensuel:83.30,  clientAnnuel:70.80,  userMin:26, userMax:33 },
+  { palier:'15 h',  mensuelAchat:10.50, annuelAchat:9,      clientMensuel:14.90,  clientAnnuel:12.90,  userMin:1,  userMax:2  },
+  { palier:'30 h',  mensuelAchat:21,    annuelAchat:17.50,  clientMensuel:29.90,  clientAnnuel:24.90,  userMin:3,  userMax:5  },
+  { palier:'50 h',  mensuelAchat:32,    annuelAchat:27.50,  clientMensuel:44.90,  clientAnnuel:39.90,  userMin:6,  userMax:8  },
+  { palier:'75 h',  mensuelAchat:44.50, annuelAchat:37.83,  clientMensuel:62.30,  clientAnnuel:52.96,  userMin:9,  userMax:12 },
+  { palier:'100 h', mensuelAchat:59.50, annuelAchat:50.58,  clientMensuel:83.30,  clientAnnuel:70.80,  userMin:13, userMax:16 },
 ];
-// Tarifs arrière-plan pour "sur mesure" (>33 utilisateurs)
+// Tarifs arrière-plan pour "sur mesure" (>16 utilisateurs)
 const smTiers360 = [
   { label:'200 h', minH:101, maxH:200, mensuelAchat:233.33, annuelAchat:198.33, clientMensuel:326.67, clientAnnuel:277.67 },
-  { label:'500 h', minH:201, maxH:500, mensuelAchat:572.50, annuelAchat:486.63, clientMensuel:801.50, clientAnnuel:681.28 },
+  { label:'500 h', minH:201, maxH:1200, mensuelAchat:572.50, annuelAchat:486.63, clientMensuel:801.50, clientAnnuel:681.28 },
 ];
 const smTiersVoice = [
   { label:'200 h', minH:101, maxH:200, mensuelAchat:116.67, annuelAchat:99.17,  clientMensuel:163.33, clientAnnuel:138.83 },
-  { label:'500 h', minH:201, maxH:500, mensuelAchat:286.25, annuelAchat:243.31, clientMensuel:400.75, clientAnnuel:340.64 },
+  { label:'500 h', minH:201, maxH:1200, mensuelAchat:286.25, annuelAchat:243.31, clientMensuel:400.75, clientAnnuel:340.64 },
 ];
 // Calcule le prix sur mesure interpolé pour N heures dans le bon tier
 function getSurMesurePrice(tiersData, hours, isAnnual) {
@@ -784,7 +889,6 @@ function renderTable(tableId, data) {
     const gainMensuel = prixVente - achat;
     const gainTotal = gainMensuel * gainMultiplier;
     const iaParPoste = prixVente / postes;
-    const clientParPoste = iaParPoste + telco;
 
     const tr = document.createElement('tr');
     tr.dataset.tableId = tableId;
@@ -794,18 +898,18 @@ function renderTable(tableId, data) {
     tr.innerHTML = `
       <td>
         <span class="palier-badge">${prefix} - ${row.palier.replace(' h','h')}</span>
-        <div style="font-size:11px;color:var(--text-light);margin-top:4px">de ${row.userMin} à ${row.userMax} utilisateurs</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:4px">${row.userMin === row.userMax ? `jusqu'à ${row.userMax} utilisateur` : `de ${row.userMin} à ${row.userMax} utilisateurs`}</div>
       </td>
       <td>
         <div style="font-size:16px;font-weight:800;color:var(--black)">${fmtHT(achat)}</div>
         <div style="font-size:11px;color:var(--text-light);margin-top:2px">/mois</div>
       </td>
       <td>
-        <div style="font-size:15px;font-weight:700;color:var(--green)">${fmtHT(clientParPoste)}</div>
-        <div style="font-size:11px;color:var(--text-light);margin-top:2px">${telco > 0 ? `IA ${fmtHT(iaParPoste)} + Tél. ${fmtHT(telco)}` : '/ utilisateur / mois'}</div>
+        <div style="font-size:15px;font-weight:700;color:var(--green)">${fmtHT(iaParPoste)}</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:2px">/ utilisateur / mois</div>
       </td>
       <td>
-        <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(clientRef)}</div>
+        <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(prixVente)}</div>
         <div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>
       </td>
       <td>
@@ -816,10 +920,10 @@ function renderTable(tableId, data) {
     tbody.appendChild(tr);
   });
 
-  // ── Ligne Sur mesure (> 33 utilisateurs) ──
+  // ── Ligne Sur mesure (> 16 utilisateurs) ──
   const sepTr = document.createElement('tr');
   sepTr.style.cssText = 'background:var(--bg)!important;cursor:default';
-  sepTr.innerHTML = `<td colspan="5" style="padding:4px 24px;font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;border-top:2px solid var(--border)">Sur mesure — au-delà de 33 utilisateurs</td>`;
+  sepTr.innerHTML = `<td colspan="5" style="padding:4px 24px;font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;border-top:2px solid var(--border)">Sur mesure — au-delà de 16 utilisateurs (base 6h/user/mois)</td>`;
   tbody.appendChild(sepTr);
 
   const smTr = document.createElement('tr');
@@ -827,7 +931,7 @@ function renderTable(tableId, data) {
   smTr.classList.add('row-sur-mesure');
   smTr.onclick = () => selectSurMesureRow(tableId);
 
-  const smHours = currentPostes && currentPostes > 33 ? currentPostes * 3 : null;
+  const smHours = currentPostes && currentPostes > 16 ? currentPostes * 6 : null;
   const smResult = smHours ? getSurMesurePrice(smTiersData, smHours, isAnnual) : null;
 
   if (smResult) {
@@ -838,7 +942,6 @@ function renderTable(tableId, data) {
     const gainTotal = gainMensuel * gainMultiplier;
     const postes = currentPostes;
     const iaParPoste = prixVente / postes;
-    const clientParPoste = iaParPoste + telco;
 
     smTr.innerHTML = `
       <td>
@@ -850,11 +953,11 @@ function renderTable(tableId, data) {
         <div style="font-size:11px;color:var(--text-light);margin-top:2px">/mois</div>
       </td>
       <td>
-        <div style="font-size:15px;font-weight:700;color:var(--green)">${fmtHT(clientParPoste)}</div>
-        <div style="font-size:11px;color:var(--text-light);margin-top:2px">${telco > 0 ? `IA ${fmtHT(iaParPoste)} + Tél. ${fmtHT(telco)}` : '/ utilisateur / mois'}</div>
+        <div style="font-size:15px;font-weight:700;color:var(--green)">${fmtHT(iaParPoste)}</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:2px">/ utilisateur / mois</div>
       </td>
       <td>
-        <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(clientRef)}</div>
+        <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(prixVente)}</div>
         <div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>
       </td>
       <td>
@@ -862,15 +965,15 @@ function renderTable(tableId, data) {
         <div style="font-size:11px;color:var(--text-light)">${gainWord}</div>
       </td>
     `;
-  } else if (smHours && smHours > 500) {
+  } else if (smHours && smHours > 1200) {
     smTr.innerHTML = `
       <td colspan="5" style="padding:14px 24px;color:var(--text-light);font-size:13px;font-style:italic">
-        Sur devis — au-delà de 500h (contacter l'équipe Fairwai)
+        Sur demande — au-delà de 1 200h · contacter l'équipe Fairwai
       </td>`;
   } else {
     smTr.innerHTML = `
       <td colspan="5" style="padding:14px 24px;color:var(--text-light);font-size:12px;font-style:italic">
-        Saisissez plus de 33 utilisateurs pour afficher le tarif sur mesure
+        Saisissez plus de 16 utilisateurs pour afficher le tarif sur mesure
       </td>`;
   }
   tbody.appendChild(smTr);
@@ -884,7 +987,7 @@ function selectSurMesureRow(tableId) {
   const smTr = document.getElementById(`sm-row-${tableId}`);
   if (smTr) smTr.classList.add('row-selected');
   // Pré-sélectionner dans le devis
-  const smHours = currentPostes && currentPostes > 33 ? currentPostes * 3 : null;
+  const smHours = currentPostes && currentPostes > 16 ? currentPostes * 6 : null;
   const smTiersData = tableId === 'table360' ? smTiers360 : smTiersVoice;
   const smResult = smHours ? getSurMesurePrice(smTiersData, smHours, billing === 'annuel') : null;
   if (smResult) {
@@ -967,11 +1070,11 @@ function applyHighlightAndBadge() {
   const u = currentPostes;
   let rowIndex = null, packLabel, isSurMesure = false;
 
-  if      (u <= 5)  { rowIndex = 0; packLabel = 'Pack - 15h'; }
-  else if (u <= 10) { rowIndex = 1; packLabel = 'Pack - 30h'; }
-  else if (u <= 16) { rowIndex = 2; packLabel = 'Pack - 50h'; }
-  else if (u <= 25) { rowIndex = 3; packLabel = 'Pack - 75h'; }
-  else if (u <= 33) { rowIndex = 4; packLabel = 'Pack - 100h'; }
+  if      (u <= 2)  { rowIndex = 0; packLabel = 'Pack - 15h'; }
+  else if (u <= 5)  { rowIndex = 1; packLabel = 'Pack - 30h'; }
+  else if (u <= 8)  { rowIndex = 2; packLabel = 'Pack - 50h'; }
+  else if (u <= 12) { rowIndex = 3; packLabel = 'Pack - 75h'; }
+  else if (u <= 16) { rowIndex = 4; packLabel = 'Pack - 100h'; }
   else              { isSurMesure = true; packLabel = 'Sur mesure'; }
 
   if (!isSurMesure) {
@@ -980,17 +1083,28 @@ function applyHighlightAndBadge() {
       if (row) row.classList.add('row-recommended');
     });
     result.innerHTML = `<span class="reco-badge">${packLabel} recommandé</span>`;
+    // Auto-set selectedPack so devis opens pre-filled
+    const activeTab = document.getElementById('tab360').classList.contains('active') ? 'table360' : 'tableVoice';
+    const dataMap = { table360: data360, tableVoice: dataVoice };
+    selectedPack = { tableId: activeTab, rowIndex, data: dataMap[activeTab][rowIndex] };
   } else {
     // Highlight la ligne sur mesure
     ['table360','tableVoice'].forEach(tableId => {
       const smRow = document.getElementById(`sm-row-${tableId}`);
       if (smRow) smRow.classList.add('row-recommended');
     });
-    const heures = u * 3;
-    if (heures > 500) {
-      result.innerHTML = `<span class="reco-badge reco-badge-custom">Sur devis — ${heures}h (> 500h)</span>`;
+    const heures = u * 6;
+    // Auto-set selectedPack for sur mesure
+    const activeTab = document.getElementById('tab360').classList.contains('active') ? 'table360' : 'tableVoice';
+    const smTiersData = activeTab === 'table360' ? smTiers360 : smTiersVoice;
+    const smResult = getSurMesurePrice(smTiersData, heures, billing === 'annuel');
+    if (smResult) {
+      selectedPack = { tableId: activeTab, rowIndex: -1, isSurMesure: true, achat: smResult.achat, label: activeTab === 'table360' ? 'Pack 360 - Sur mesure' : 'Pack Voice - Sur mesure' };
+    }
+    if (heures > 1200) {
+      result.innerHTML = `<span class="reco-badge reco-badge-custom">Sur demande — ${u} utilisateurs · ${heures}h estimées</span>`;
     } else {
-      result.innerHTML = `<span class="reco-badge reco-badge-custom">Sur mesure — ${heures}h pour ${u} utilisateurs</span>`;
+      result.innerHTML = `<span class="reco-badge reco-badge-custom">Sur mesure — ${u} utilisateurs · ${heures}h estimées (6h/user)</span>`;
     }
   }
 }
@@ -1001,6 +1115,7 @@ function updateRecommendation(val) {
   renderTable('table360', data360);
   renderTable('tableVoice', dataVoice);
   applyHighlightAndBadge();
+  updateSavingsBanner();
 }
 
 // ══════════════════════════════════════════════════
@@ -1020,6 +1135,7 @@ function updateAll() {
   renderLicenceCard('licenceExec', licenceExec, 'exec');
   renderLicenceCard('licenceVoice', licenceVoiceInd, 'voice-ind');
   applyHighlightAndBadge();
+  updateSavingsBanner();
 }
 
 // ══════════════════════════════════════════════════
@@ -1043,7 +1159,31 @@ function setBilling(type) {
   billing = type;
   document.querySelectorAll('.btn-mensuel').forEach(b => b.classList.toggle('active', type === 'mensuel'));
   document.querySelectorAll('.btn-annuel').forEach(b => b.classList.toggle('active', type === 'annuel'));
+  updateCompetitorPrices();
   updateAll();
+}
+
+// Met à jour les prix concurrents dans l'onboarding selon le billing actif
+function updateCompetitorPrices() {
+  const isAnnual = billing === 'annuel';
+  const fmtPrice = v => Number.isInteger(v * 100 / 100) && v % 1 === 0 ? `€${v}` : `€${v.toFixed(2).replace('.',',')}`;
+  Object.entries(COMPETITORS).forEach(([key, comp]) => {
+    if (!comp || !comp.name) return;
+    const el = document.querySelector(`#ob-card-${key} .ob-card-desc`);
+    if (!el) return;
+    const price = isAnnual ? comp.annuel : comp.mensuel;
+    const telco = isAnnual ? (comp.telcoA || 0) : (comp.telcoM || 0);
+    if (comp.withTelco) {
+      el.textContent = `${fmtPrice(price + telco)}/user/mois (IA+Tél.)`;
+    } else {
+      // Afficher mensuel/annuel si différents
+      if (comp.mensuel !== comp.annuel) {
+        el.textContent = isAnnual ? `${fmtPrice(comp.annuel)}/user/mois (annuel)` : `${fmtPrice(comp.mensuel)}/user/mois (mensuel)`;
+      } else {
+        el.textContent = `${fmtPrice(price)}/user/mois`;
+      }
+    }
+  });
 }
 
 function switchTab(tab) {
@@ -1058,9 +1198,12 @@ function updateStickyTops() {
   const h1 = document.querySelector('header').offsetHeight;
   const h2 = document.querySelector('.tab-nav').offsetHeight;
   const h3 = document.querySelector('.sim-bar').offsetHeight;
+  const h4 = document.querySelector('.reco-bar').offsetHeight;
   document.querySelector('.tab-nav').style.top = h1 + 'px';
   document.querySelector('.sim-bar').style.top = (h1 + h2) + 'px';
   document.querySelector('.reco-bar').style.top = (h1 + h2 + h3) + 'px';
+  const savingsBar = document.getElementById('savingsBar');
+  if (savingsBar) savingsBar.style.top = (h1 + h2 + h3 + h4) + 'px';
 }
 
 // ══════════════════════════════════════════════════
@@ -1616,8 +1759,8 @@ function buildDevisPacks() {
     container.appendChild(makeItem(id, label, achat * (1 + marginPct / 100)));
   });
   // Sur mesure 360
-  if (currentPostes && currentPostes > 33) {
-    const hours = currentPostes * 3;
+  if (currentPostes && currentPostes > 16) {
+    const hours = currentPostes * 6;
     const sm = getSurMesurePrice(smTiers360, hours, devisBilling === 'annuel');
     if (sm) {
       const label = `Pack 360 - Sur mesure (${currentPostes} utilisateurs · ${hours}h)`;
@@ -1633,20 +1776,13 @@ function buildDevisPacks() {
     container.appendChild(makeItem(id, label, achat * (1 + marginPct / 100)));
   });
   // Sur mesure Voice
-  if (currentPostes && currentPostes > 33) {
-    const hours = currentPostes * 3;
+  if (currentPostes && currentPostes > 16) {
+    const hours = currentPostes * 6;
     const sm = getSurMesurePrice(smTiersVoice, hours, devisBilling === 'annuel');
     if (sm) {
       const label = `Pack Voice - Sur mesure (${currentPostes} utilisateurs · ${hours}h)`;
       container.appendChild(makeItem('pack-voice-sur-mesure', label, sm.achat * (1 + marginPct / 100)));
     }
-  }
-
-  // Telephony option — prix par poste, quantité = nb postes
-  const telco = getTelcoPerPoste();
-  if (telco > 0) {
-    addHeader('Option Téléphonie');
-    container.appendChild(makeItem('pack-telephonie', `Téléphonie (${fmt(telco)}/poste)`, telco, 'unit'));
   }
 
   // Licences individuelles — prix par poste, quantité = nb postes
@@ -1658,16 +1794,23 @@ function buildDevisPacks() {
 
   // Auto-select pack from simulator
   if (selectedPack) {
-    const palier = selectedPack.data.palier;
-    const targetId = selectedPack.tableId === 'table360'
-      ? `pack-360-${palier.replace(/ /g,'_')}`
-      : `pack-voice-${palier.replace(/ /g,'_')}`;
-    const item = document.querySelector(`.devis-pack-item[data-pack-id="${targetId}"]`);
-    if (item) {
-      const cb = item.querySelector('input[type=checkbox]');
-      if (cb) { cb.checked = true; item.classList.add('selected'); }
-      const wrap = item.querySelector('.dv-qty-wrap');
-      if (wrap) wrap.classList.add('visible');
+    let targetId;
+    if (selectedPack.isSurMesure) {
+      targetId = selectedPack.tableId === 'table360' ? 'pack-360-sur-mesure' : 'pack-voice-sur-mesure';
+    } else if (selectedPack.data?.palier) {
+      const palier = selectedPack.data.palier;
+      targetId = selectedPack.tableId === 'table360'
+        ? `pack-360-${palier.replace(/ /g,'_')}`
+        : `pack-voice-${palier.replace(/ /g,'_')}`;
+    }
+    if (targetId) {
+      const item = document.querySelector(`.devis-pack-item[data-pack-id="${targetId}"]`);
+      if (item) {
+        const cb = item.querySelector('input[type=checkbox]');
+        if (cb) { cb.checked = true; item.classList.add('selected'); }
+        const wrap = item.querySelector('.dv-qty-wrap');
+        if (wrap) wrap.classList.add('visible');
+      }
     }
   }
 }
@@ -1959,11 +2102,155 @@ function sauvegarderDevis() {
 }
 
 // ══════════════════════════════════════════════════
+//  CONCURRENTS & ONBOARDING
+// ══════════════════════════════════════════════════
+let offerType = null;   // 'ia' | 'ia+telco'
+let competitor = null;  // 'leexi' | 'noota' | 'copilot' | 'ringover' | 'aircall' | 'none'
+
+// Prix par utilisateur par mois (mensuel = facturation mensuelle, annuel = engagement annuel)
+// withTelco: true = le concurrent inclut déjà la téléphonie dans son bundle
+const COMPETITORS = {
+  leexi:   { name:'Leexi',         mensuel:23,    annuel:23,    telcoM:0,  telcoA:0,  withTelco:false },
+  noota:   { name:'Noota Pro',     mensuel:29,    annuel:19,    telcoM:0,  telcoA:0,  withTelco:false },
+  copilot: { name:'Copilot M365',  mensuel:23.60, annuel:23.60, telcoM:0,  telcoA:0,  withTelco:false },
+  ringover:{ name:'Ringover',      mensuel:44,    annuel:44,    telcoM:39, telcoA:39, withTelco:true  },
+  aircall: { name:'Aircall',       mensuel:50,    annuel:50,    telcoM:49, telcoA:49, withTelco:true  },
+  none:    { name:null }
+};
+
+function selectOfferType(type) {
+  offerType = type;
+  const iaOnly   = type === 'ia';
+  // IA uniquement → Leexi, Noota, Copilot  |  IA+Télécom → Copilot, Ringover, Aircall
+  document.getElementById('ob-card-leexi').style.display    = iaOnly ? '' : 'none';
+  document.getElementById('ob-card-noota').style.display    = iaOnly ? '' : 'none';
+  document.getElementById('ob-card-copilot').style.display  = iaOnly ? '' : 'none';
+  document.getElementById('ob-card-ringover').style.display = iaOnly ? 'none' : '';
+  document.getElementById('ob-card-aircall').style.display  = iaOnly ? 'none' : '';
+  document.getElementById('ob-step1').style.display = 'none';
+  document.getElementById('ob-step2').style.display = 'block';
+}
+
+function goToStep1() {
+  document.getElementById('ob-step1').style.display = 'block';
+  document.getElementById('ob-step2').style.display = 'none';
+}
+
+function selectCompetitor(comp) {
+  competitor = comp;
+  document.getElementById('onboardingOverlay').classList.add('hidden');
+
+  // Champ téléphonie : visible uniquement si IA + Télécom
+  const telcoOption = document.getElementById('telcoOption');
+  if (offerType === 'ia+telco') {
+    telcoOption.style.display = 'flex';
+    document.getElementById('telcoCheck').checked = true;
+    // Garder la valeur saisie ou mettre 15 par défaut
+    if (!document.getElementById('telcoPrice').value || document.getElementById('telcoPrice').value == '0') {
+      document.getElementById('telcoPrice').value = '15';
+    }
+  } else {
+    telcoOption.style.display = 'none';
+    document.getElementById('telcoCheck').checked = false;
+  }
+
+  updateAll();
+  updateSavingsBanner();
+}
+
+function reopenOnboarding() {
+  // Retour à l'étape 1
+  document.getElementById('ob-step1').style.display = 'block';
+  document.getElementById('ob-step2').style.display = 'none';
+  document.getElementById('onboardingOverlay').classList.remove('hidden');
+  updateCompetitorPrices();
+}
+
+// ══════════════════════════════════════════════════
+//  SAVINGS BANNER
+// ══════════════════════════════════════════════════
+function updateSavingsBanner() {
+  const bar = document.getElementById('savingsBar');
+  const inner = document.getElementById('savingsInner');
+
+  // Pas de bandeau si pas de contexte ou pas de concurrent ou pas d'utilisateurs
+  if (!competitor || competitor === 'none' || !currentPostes || currentPostes < 1) {
+    bar.style.display = 'none';
+    updateStickyTops();
+    return;
+  }
+
+  const comp = COMPETITORS[competitor];
+  if (!comp || !comp.name) { bar.style.display = 'none'; updateStickyTops(); return; }
+
+  const isAnnual = billing === 'annuel';
+  const u = currentPostes;
+  const telcoPricePerPoste = (offerType === 'ia+telco')
+    ? (parseFloat(document.getElementById('telcoPrice').value) || 15)
+    : 0;
+
+  // ── Prix concurrent (par utilisateur par mois) ──
+  const compIAPerUser = isAnnual ? comp.annuel : comp.mensuel;
+  // Ajouter la téléphonie concurrent si IA+Télécom ET que le concurrent inclut la téléphonie
+  const compTelcoPerUser = (offerType === 'ia+telco' && comp.withTelco)
+    ? (isAnnual ? comp.telcoA : comp.telcoM) : 0;
+  const compTotalMensuel = (compIAPerUser + compTelcoPerUser) * u;
+  const compTotalAnnuel = compTotalMensuel * 12;
+
+  // ── Prix Fairwai (pack recommandé pour ce nombre d'utilisateurs) ──
+  let fairwaiAchat = null;
+  if      (u <= 2)  { fairwaiAchat = isAnnual ? data360[0].annuelAchat : data360[0].mensuelAchat; }
+  else if (u <= 5)  { fairwaiAchat = isAnnual ? data360[1].annuelAchat : data360[1].mensuelAchat; }
+  else if (u <= 8)  { fairwaiAchat = isAnnual ? data360[2].annuelAchat : data360[2].mensuelAchat; }
+  else if (u <= 12) { fairwaiAchat = isAnnual ? data360[3].annuelAchat : data360[3].mensuelAchat; }
+  else if (u <= 16) { fairwaiAchat = isAnnual ? data360[4].annuelAchat : data360[4].mensuelAchat; }
+  else {
+    const hours = u * 6;
+    const smResult = getSurMesurePrice(smTiers360, hours, isAnnual);
+    if (smResult) fairwaiAchat = smResult.achat;
+  }
+
+  if (fairwaiAchat === null) { bar.style.display = 'none'; updateStickyTops(); return; }
+
+  const fairwaiPrixVente  = fairwaiAchat * (1 + marginPct / 100); // pool mensuel
+  const fairwaiTelco      = telcoPricePerPoste * u;               // téléphonie mensuelle
+  const fairwaiTotalMensuel = fairwaiPrixVente + fairwaiTelco;
+  const fairwaiTotalAnnuel  = fairwaiTotalMensuel * 12;
+
+  const savingsMensuel = compTotalMensuel - fairwaiTotalMensuel;
+  const savingsAnnuel  = compTotalAnnuel  - fairwaiTotalAnnuel;
+  const positif = savingsMensuel >= 0;
+  const pillCls = positif ? 'green' : 'red';
+
+  // Note si IA+Télécom mais concurrent sans téléphonie
+  let note = '';
+  if (offerType === 'ia+telco' && !comp.withTelco) {
+    note = `<span class="savings-note">· ${comp.name} sans téléphonie intégrée</span>`;
+  }
+
+  inner.innerHTML = `
+    <div class="savings-left">
+      <span class="savings-prefix">${positif ? '💚 Économie client vs' : '⚠️ Fairwai vs'}</span>
+      <span class="savings-competitor">${comp.name}</span>
+      ${note}
+    </div>
+    <div class="savings-pills">
+      <span class="savings-pill ${pillCls}">${positif ? '+' : '-'}${fmtHT(Math.abs(savingsMensuel))}/mois</span>
+      ${isAnnual ? `<span class="savings-pill ${pillCls}">${positif ? '+' : '-'}${fmtHT(Math.abs(savingsAnnuel))}/an</span>` : ''}
+    </div>
+    <button class="savings-change-btn" onclick="reopenOnboarding()">✎ Changer le contexte</button>
+  `;
+  bar.style.display = 'block';
+  updateStickyTops();
+}
+
+// ══════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════
 updateAll();
 updateStickyTops();
 updatePortfolio();
+updateCompetitorPrices();
 window.addEventListener('resize', updateStickyTops);
 </script>
 </body>
