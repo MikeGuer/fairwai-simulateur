@@ -1163,25 +1163,17 @@ function setBilling(type) {
   updateAll();
 }
 
-// Met à jour les prix concurrents dans l'onboarding selon le billing actif
+// Met à jour les prix concurrents dans l'onboarding — toujours en mensuel (prix sans engagement)
 function updateCompetitorPrices() {
-  const isAnnual = billing === 'annuel';
-  const fmtPrice = v => Number.isInteger(v * 100 / 100) && v % 1 === 0 ? `€${v}` : `€${v.toFixed(2).replace('.',',')}`;
+  const fmtPrice = v => v % 1 === 0 ? `€${v}` : `€${v.toFixed(2).replace('.',',')}`;
   Object.entries(COMPETITORS).forEach(([key, comp]) => {
     if (!comp || !comp.name) return;
     const el = document.querySelector(`#ob-card-${key} .ob-card-desc`);
     if (!el) return;
-    const price = isAnnual ? comp.annuel : comp.mensuel;
-    const telco = isAnnual ? (comp.telcoA || 0) : (comp.telcoM || 0);
     if (comp.withTelco) {
-      el.textContent = `${fmtPrice(price + telco)}/user/mois (IA+Tél.)`;
+      el.textContent = `${fmtPrice(comp.mensuel + comp.telcoM)}/user/mois`;
     } else {
-      // Afficher mensuel/annuel si différents
-      if (comp.mensuel !== comp.annuel) {
-        el.textContent = isAnnual ? `${fmtPrice(comp.annuel)}/user/mois (annuel)` : `${fmtPrice(comp.mensuel)}/user/mois (mensuel)`;
-      } else {
-        el.textContent = `${fmtPrice(price)}/user/mois`;
-      }
+      el.textContent = `${fmtPrice(comp.mensuel)}/user/mois`;
     }
   });
 }
