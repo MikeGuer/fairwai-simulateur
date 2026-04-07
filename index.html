@@ -85,7 +85,7 @@ header{background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(20px
 .reco-bar{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border-light);position:sticky;top:178px;z-index:70}
 .reco-inner{max-width:1280px;margin:0 auto;padding:12px 40px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
 .reco-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.reco-label{font-size:13px;font-weight:500;color:var(--text-mid);white-space:nowrap}
+.reco-label{font-size:14px;font-weight:700;color:#1D1D1F;white-space:nowrap}
 .reco-input-wrap{display:flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border-light);border-radius:10px;padding:5px 12px;transition:border-color .15s}
 .reco-input-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(52,82,255,.08)}
 .reco-input{width:64px;border:none;background:transparent;font-size:15px;font-weight:700;color:var(--text);font-family:inherit;outline:none;text-align:center}
@@ -95,17 +95,18 @@ header{background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(20px
 .reco-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;border-radius:20px;padding:4px 14px;letter-spacing:.1px}
 .reco-badge-custom{background:var(--gold)}
 
-/* Telephony option */
 /* ── TELCO BAR ── */
-.telco-bar{background:linear-gradient(90deg,#F0F4FF,#EEF2FF);border-bottom:1px solid rgba(52,82,255,.14);position:sticky;z-index:63}
-.telco-bar-inner{max-width:1280px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.telco-bar-icon{font-size:20px;flex-shrink:0}
-.telco-bar-label{font-size:13px;font-weight:700;color:#3452FF;white-space:nowrap}
-.telco-bar-input-wrap{display:flex;align-items:center;gap:8px}
-.telco-bar-input{width:76px;padding:6px 10px;border:1.5px solid rgba(52,82,255,.3);border-radius:10px;font-size:16px;font-weight:800;color:#3452FF;text-align:center;outline:none;font-family:inherit;background:#fff;transition:border-color .15s}
-.telco-bar-input:focus{border-color:#3452FF;box-shadow:0 0 0 3px rgba(52,82,255,.1)}
+.telco-bar{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border-light);border-top:1px solid rgba(52,82,255,.08);position:sticky;z-index:63}
+.telco-bar-inner{max-width:1280px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.telco-bar-accent{width:3px;height:38px;border-radius:2px;background:#3452FF;flex-shrink:0}
+.telco-bar-left{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.telco-bar-label{font-size:13px;font-weight:700;color:#1D1D1F;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.telco-bar-label-icon{font-size:16px}
+.telco-bar-hint{font-size:11px;color:#AEAEB2;font-weight:400;white-space:nowrap}
+.telco-bar-input-wrap{display:flex;align-items:center;gap:8px;margin-left:4px}
+.telco-bar-input{width:72px;padding:6px 10px;border:1.5px solid rgba(52,82,255,.25);border-radius:10px;font-size:16px;font-weight:800;color:#3452FF;text-align:center;outline:none;font-family:inherit;background:#F7F8FF;transition:all .15s}
+.telco-bar-input:focus{border-color:#3452FF;background:#fff;box-shadow:0 0 0 3px rgba(52,82,255,.1)}
 .telco-bar-unit{font-size:12px;font-weight:600;color:#86868B;white-space:nowrap}
-.telco-bar-note{font-size:11px;color:#AEAEB2;font-weight:500;flex:1;text-align:right;white-space:nowrap}
 
 /* ── MAIN ── */
 main{max-width:1280px;margin:0 auto;padding:24px 40px 100px}
@@ -519,14 +520,16 @@ footer strong{color:rgba(255,255,255,.8)}
 <!-- ═══ TELCO BAR ═══ -->
 <div class="telco-bar" id="telcoBar" style="display:none">
   <div class="telco-bar-inner">
-    <span class="telco-bar-icon">📡</span>
-    <span class="telco-bar-label">Pack télécom du revendeur</span>
+    <div class="telco-bar-accent"></div>
+    <div class="telco-bar-left">
+      <span class="telco-bar-label"><span class="telco-bar-label-icon">📡</span>Pack télécom du revendeur</span>
+      <span class="telco-bar-hint">Entrez votre prix de vente par poste pour faire un bundle avec l'IA et générer des économies</span>
+    </div>
     <div class="telco-bar-input-wrap">
       <input type="number" id="telcoPrice" class="telco-bar-input" value="15" min="0" step="0.5"
              oninput="updateSavingsBanner();updateStickyTops()" placeholder="15">
       <span class="telco-bar-unit">€ / poste / mois HT</span>
     </div>
-    <span class="telco-bar-note">Inclus dans le calcul d'économie client</span>
   </div>
 </div>
 
