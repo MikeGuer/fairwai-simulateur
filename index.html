@@ -96,12 +96,16 @@ header{background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(20px
 .reco-badge-custom{background:var(--gold)}
 
 /* Telephony option */
-.telco-option{display:flex;align-items:center;gap:10px;margin-left:auto}
-.telco-label{font-size:12px;font-weight:500;color:var(--text-mid);white-space:nowrap}
-.telco-check{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
-.telco-price-wrap{display:flex;align-items:center;gap:4px}
-.telco-price-input{width:56px;padding:4px 8px;border:1.5px solid var(--border-light);border-radius:8px;font-size:13px;font-weight:700;text-align:center;font-family:inherit;color:var(--accent);background:var(--white);transition:border-color .15s}
-.telco-price-input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(52,82,255,.08)}
+/* ── TELCO BAR ── */
+.telco-bar{background:linear-gradient(90deg,#F0F4FF,#EEF2FF);border-bottom:1px solid rgba(52,82,255,.14);position:sticky;z-index:63}
+.telco-bar-inner{max-width:1280px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.telco-bar-icon{font-size:20px;flex-shrink:0}
+.telco-bar-label{font-size:13px;font-weight:700;color:#3452FF;white-space:nowrap}
+.telco-bar-input-wrap{display:flex;align-items:center;gap:8px}
+.telco-bar-input{width:76px;padding:6px 10px;border:1.5px solid rgba(52,82,255,.3);border-radius:10px;font-size:16px;font-weight:800;color:#3452FF;text-align:center;outline:none;font-family:inherit;background:#fff;transition:border-color .15s}
+.telco-bar-input:focus{border-color:#3452FF;box-shadow:0 0 0 3px rgba(52,82,255,.1)}
+.telco-bar-unit{font-size:12px;font-weight:600;color:#86868B;white-space:nowrap}
+.telco-bar-note{font-size:11px;color:#AEAEB2;font-weight:500;flex:1;text-align:right;white-space:nowrap}
 
 /* ── MAIN ── */
 main{max-width:1280px;margin:0 auto;padding:24px 40px 100px}
@@ -509,14 +513,20 @@ footer strong{color:rgba(255,255,255,.8)}
     <div class="reco-result" id="recoResult">
       <span class="reco-placeholder">Entrez un nombre d'utilisateurs pour voir le pack recommandé</span>
     </div>
-    <div class="telco-option" id="telcoOption" style="display:none">
-      <input type="checkbox" id="telcoCheck" class="telco-check" onchange="updateSavingsBanner()">
-      <label class="telco-label" for="telcoCheck">Pack télécom client</label>
-      <div class="telco-price-wrap">
-        <input type="number" id="telcoPrice" class="telco-price-input" value="15" min="0" step="0.5" oninput="updateSavingsBanner()">
-        <span style="font-size:11px;color:var(--text-light);font-weight:600">€/poste</span>
-      </div>
+  </div>
+</div>
+
+<!-- ═══ TELCO BAR ═══ -->
+<div class="telco-bar" id="telcoBar" style="display:none">
+  <div class="telco-bar-inner">
+    <span class="telco-bar-icon">📡</span>
+    <span class="telco-bar-label">Pack télécom du revendeur</span>
+    <div class="telco-bar-input-wrap">
+      <input type="number" id="telcoPrice" class="telco-bar-input" value="15" min="0" step="0.5"
+             oninput="updateSavingsBanner();updateStickyTops()" placeholder="15">
+      <span class="telco-bar-unit">€ / poste / mois HT</span>
     </div>
+    <span class="telco-bar-note">Inclus dans le calcul d'économie client</span>
   </div>
 </div>
 
@@ -906,7 +916,7 @@ function adjustPrice(tableId, rowIndex, delta) {
 }
 
 function getTelcoPerPoste() {
-  if (!document.getElementById('telcoCheck').checked) return 0;
+  if (offerType !== 'ia+telco') return 0;
   return parseFloat(document.getElementById('telcoPrice').value) || 0;
 }
 
@@ -1226,11 +1236,14 @@ function updateStickyTops() {
   const h2 = document.querySelector('.tab-nav').offsetHeight;
   const h3 = document.querySelector('.sim-bar').offsetHeight;
   const h4 = document.querySelector('.reco-bar').offsetHeight;
+  const telcoBarEl = document.getElementById('telcoBar');
+  const h5 = (telcoBarEl && telcoBarEl.style.display !== 'none') ? telcoBarEl.offsetHeight : 0;
   document.querySelector('.tab-nav').style.top = h1 + 'px';
   document.querySelector('.sim-bar').style.top = (h1 + h2) + 'px';
   document.querySelector('.reco-bar').style.top = (h1 + h2 + h3) + 'px';
+  if (telcoBarEl) telcoBarEl.style.top = (h1 + h2 + h3 + h4) + 'px';
   const savingsBar = document.getElementById('savingsBar');
-  if (savingsBar) savingsBar.style.top = (h1 + h2 + h3 + h4) + 'px';
+  if (savingsBar) savingsBar.style.top = (h1 + h2 + h3 + h4 + h5) + 'px';
 }
 
 // ══════════════════════════════════════════════════
@@ -2164,22 +2177,21 @@ function selectCompetitor(comp) {
   competitor = comp;
   document.getElementById('onboardingOverlay').classList.add('hidden');
 
-  // Champ téléphonie : visible uniquement si IA + Télécom
-  const telcoOption = document.getElementById('telcoOption');
+  // Barre télécom : visible uniquement si IA + Télécom
+  const telcoBar = document.getElementById('telcoBar');
   if (offerType === 'ia+telco') {
-    telcoOption.style.display = 'flex';
-    document.getElementById('telcoCheck').checked = true;
+    telcoBar.style.display = 'block';
     // Garder la valeur saisie ou mettre 15 par défaut
     if (!document.getElementById('telcoPrice').value || document.getElementById('telcoPrice').value == '0') {
       document.getElementById('telcoPrice').value = '15';
     }
   } else {
-    telcoOption.style.display = 'none';
-    document.getElementById('telcoCheck').checked = false;
+    telcoBar.style.display = 'none';
   }
 
   updateAll();
   updateSavingsBanner();
+  updateStickyTops();
 }
 
 function reopenOnboarding() {
@@ -2187,7 +2199,9 @@ function reopenOnboarding() {
   document.getElementById('ob-step1').style.display = 'block';
   document.getElementById('ob-step2').style.display = 'none';
   document.getElementById('onboardingOverlay').classList.remove('hidden');
+  document.getElementById('telcoBar').style.display = 'none';
   updateCompetitorPrices();
+  updateStickyTops();
 }
 
 // ══════════════════════════════════════════════════
