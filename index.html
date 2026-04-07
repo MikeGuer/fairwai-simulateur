@@ -2312,9 +2312,10 @@ function buildSavingsHTML(forPrint) {
   const telcoCtx = (offerType === 'ia+telco')
     ? (comp.withTelco ? ' (IA + téléphonie)' : ' (IA uniquement — sans téléphonie intégrée)')
     : '';
-  const explainText = `Cette comparaison oppose ${u} licence${u > 1 ? 's' : ''} individuelle${u > 1 ? 's' : ''} `
-    + `<strong>${comp.name}${telcoCtx}</strong> à un pack pool partagé <strong>Fairwai 360 — Pack ${packLabel}</strong>. `
-    + `Avec Fairwai, vos ${u} utilisateurs mutualisent un volume d'heures commun, sans payer par tête.`;
+  const explainText = `En passant de <strong>${u} licence${u > 1 ? 's' : ''} individuelle${u > 1 ? 's' : ''} ${comp.name}</strong> `
+    + `à un pack pool partagé <strong>Fairwai 360 — Pack ${packLabel}</strong>, `
+    + `votre équipe améliore la capacité d'analyse IA tout en optimisant son budget. `
+    + `La mutualisation des heures entre collaborateurs élimine le surcoût des licences sous-utilisées.`;
 
   // Lignes concurrent
   let compRows = `
