@@ -407,6 +407,10 @@ tbody td:first-child{padding-left:28px}
 .sp-explain{background:#F7F7F8;border-radius:10px;padding:9px 13px;margin-bottom:14px;font-size:11.5px;color:#86868B;line-height:1.5}
 .sp-pdf-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px 16px;border-radius:12px;border:none;background:linear-gradient(135deg,#1A2040,#2C3E6B);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;margin-top:14px}
 .sp-pdf-btn:hover{background:linear-gradient(135deg,#0F1629,#1A2040);transform:translateY(-1px);box-shadow:0 6px 20px rgba(15,22,41,.35)}
+.price-adj-wrap{display:flex;align-items:center;gap:8px}
+.price-adj-btn{background:var(--bg);border:1.5px solid var(--border-light);border-radius:8px;width:26px;height:26px;cursor:pointer;font-size:17px;font-weight:700;color:var(--text-mid);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;padding:0;line-height:1;font-family:inherit}
+.price-adj-btn:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.price-adj-delta{font-size:10px;font-weight:700;margin-top:2px}
 .savings-pill{cursor:pointer;transition:opacity .15s}
 .savings-pill:hover{opacity:.8}
 
@@ -480,24 +484,12 @@ footer strong{color:rgba(255,255,255,.8)}
   </div>
 </div>
 
-<!-- ═══ SIM BAR ═══ -->
+<!-- ═══ BILLING BAR ═══ -->
 <div class="sim-bar">
-  <div class="sim-inner">
-    <span class="sim-label">Simulateur de marge</span>
-    <div class="sim-controls">
-      <div class="margin-input-wrap">
-        <label for="marginRange">Votre marge :</label>
-        <input type="range" id="marginRange" class="margin-range" min="0" max="100" value="40" step="1">
-        <input type="number" id="marginNum" class="margin-num" value="40" min="0" max="100">
-        <span style="font-size:14px;font-weight:700;color:var(--text-light)">%</span>
-      </div>
-      <div class="toggle-billing">
-        <button class="btn-period btn-mensuel" onclick="setBilling('mensuel')">Mensuel</button>
-        <button class="btn-period btn-annuel active" onclick="setBilling('annuel')">Annuel</button>
-      </div>
-    </div>
-    <div class="sim-info">
-      Prix de vente = Prix achat × <span id="simFormula">1,40</span>
+  <div class="sim-inner" style="justify-content:flex-end">
+    <div class="toggle-billing">
+      <button class="btn-period btn-mensuel" onclick="setBilling('mensuel')">Mensuel</button>
+      <button class="btn-period btn-annuel active" onclick="setBilling('annuel')">Annuel</button>
     </div>
   </div>
 </div>
@@ -562,7 +554,7 @@ footer strong{color:rgba(255,255,255,.8)}
             <th>Palier</th>
             <th>Prix d'achat<br>revendeur mensuel HT</th>
             <th>IA / utilisateur HT</th>
-            <th>Prix de vente<br>client pool HT</th>
+            <th>Prix de vente<br>référence Pool HT</th>
             <th id="gainLabel360">Marge annuelle revendeur</th>
           </tr>
         </thead>
@@ -601,7 +593,7 @@ footer strong{color:rgba(255,255,255,.8)}
             <th>Palier</th>
             <th>Prix d'achat<br>revendeur mensuel HT</th>
             <th>IA / utilisateur HT</th>
-            <th>Prix de vente<br>client pool HT</th>
+            <th>Prix de vente<br>référence Pool HT</th>
             <th id="gainLabelVoice">Marge annuelle revendeur</th>
           </tr>
         </thead>
@@ -885,11 +877,11 @@ const licenceVoiceInd = {
 // ══════════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════════
-let marginPct = 40;
 let billing = 'annuel';
 let currentPostes = null;
 let selectedPack = null; // {tableId, rowIndex, data}
 let lastSavingsData = null; // stocké pour le popover de détail
+let priceAdjustments = {}; // {tableId-rowIndex: delta €} pour ajustements +/- du commercial
 
 // ══════════════════════════════════════════════════
 //  UTILS
@@ -898,9 +890,20 @@ const fmt = v => v.toFixed(2).replace('.', ',') + ' €';
 const fmtHT = v => v.toFixed(2).replace('.', ',') + ' € HT';
 const fmtN = v => v.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
 
-// Prix de vente = prix d'achat × (1 + marge%)
-// Gain = prix de vente - prix d'achat
-// TOUT est calculé depuis le prix d'ACHAT, jamais depuis le prix client référence
+// Prix de vente = prix référence client (clientMensuel/clientAnnuel) ± ajustement commercial
+// Gain = prix de vente - prix d'achat revendeur
+
+function getAdjustedPrice(tableId, rowIndex, row, isAnnual) {
+  const base = isAnnual ? row.clientAnnuel : row.clientMensuel;
+  return base + (priceAdjustments[`${tableId}-${rowIndex}`] || 0);
+}
+function adjustPrice(tableId, rowIndex, delta) {
+  const key = `${tableId}-${rowIndex}`;
+  priceAdjustments[key] = (priceAdjustments[key] || 0) + delta;
+  renderTable(tableId, tableId === 'table360' ? data360 : dataVoice);
+  applyHighlightAndBadge();
+  updateSavingsBanner();
+}
 
 function getTelcoPerPoste() {
   if (!document.getElementById('telcoCheck').checked) return 0;
@@ -926,9 +929,9 @@ function renderTable(tableId, data) {
 
   data.forEach((row, idx) => {
     const achat = isAnnual ? row.annuelAchat : row.mensuelAchat;
-    const clientRef = isAnnual ? row.clientAnnuel : row.clientMensuel;
     const postes = currentPostes || Math.floor((row.userMin + row.userMax) / 2);
-    const prixVente = achat * (1 + marginPct / 100);
+    const prixVente = getAdjustedPrice(tableId, idx, row, isAnnual);
+    const adj = priceAdjustments[`${tableId}-${idx}`] || 0;
     const gainMensuel = prixVente - achat;
     const gainTotal = gainMensuel * gainMultiplier;
     const iaParPoste = prixVente / postes;
@@ -952,8 +955,14 @@ function renderTable(tableId, data) {
         <div style="font-size:11px;color:var(--text-light);margin-top:2px">/ utilisateur / mois</div>
       </td>
       <td>
-        <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(prixVente)}</div>
-        <div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>
+        <div class="price-adj-wrap">
+          <button class="price-adj-btn" onclick="event.stopPropagation();adjustPrice('${tableId}',${idx},-1)">−</button>
+          <div>
+            <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(prixVente)}</div>
+            <div class="price-adj-delta" style="color:${adj>0?'var(--accent)':adj<0?'#E5533A':'var(--green);opacity:.7'}">${adj!==0?(adj>0?'+':'')+adj.toFixed(0)+' € vs réf.':'réf. pool /mois'}</div>
+          </div>
+          <button class="price-adj-btn" onclick="event.stopPropagation();adjustPrice('${tableId}',${idx},+1)">+</button>
+        </div>
       </td>
       <td>
         <div style="font-size:16px;font-weight:800;color:var(--accent)">${fmtHT(gainTotal)}</div>
@@ -979,8 +988,7 @@ function renderTable(tableId, data) {
 
   if (smResult) {
     const achat = smResult.achat;
-    const clientRef = smResult.client;
-    const prixVente = achat * (1 + marginPct / 100);
+    const prixVente = smResult.client;
     const gainMensuel = prixVente - achat;
     const gainTotal = gainMensuel * gainMultiplier;
     const postes = currentPostes;
@@ -1001,7 +1009,7 @@ function renderTable(tableId, data) {
       </td>
       <td>
         <div style="font-size:16px;font-weight:800;color:var(--green)">${fmtHT(prixVente)}</div>
-        <div style="font-size:11px;color:var(--green);opacity:.7">pool /mois</div>
+        <div style="font-size:11px;color:var(--green);opacity:.7">réf. pool /mois</div>
       </td>
       <td>
         <div style="font-size:16px;font-weight:800;color:var(--accent)">${fmtHT(gainTotal)}</div>
@@ -1063,7 +1071,7 @@ function renderLicenceCard(containerId, lic, cssClass) {
   const container = document.getElementById(containerId);
   const isAnnual = billing === 'annuel';
   const achat = isAnnual ? lic.annuelAchat : lic.mensuelAchat;
-  const prixVente = achat * (1 + marginPct / 100);
+  const prixVente = isAnnual ? lic.clientAnnuel : lic.clientMensuel;
   const gainMensuel = prixVente - achat;
   const gainMultiplier = isAnnual ? 12 : 1;
   const gainWord = isAnnual ? 'annuel' : 'mensuel';
@@ -1079,9 +1087,9 @@ function renderLicenceCard(containerId, lic, cssClass) {
           <div class="lp-sub" style="color:var(--text-light)">/mois</div>
         </div>
         <div class="lp-block lp-block-client">
-          <div class="lp-label" style="color:var(--green)">Prix de vente HT</div>
+          <div class="lp-label" style="color:var(--green)">Prix de vente référence HT</div>
           <div class="lp-value" style="color:var(--green)">${fmtHT(prixVente)}</div>
-          <div class="lp-sub" style="color:var(--green)">+${marginPct}% /mois</div>
+          <div class="lp-sub" style="color:var(--green)">réf. /mois</div>
         </div>
         <div class="lp-block lp-block-sell">
           <div class="lp-label" style="color:var(--accent-text)">Marge mensuelle revendeur HT</div>
@@ -1165,9 +1173,6 @@ function updateRecommendation(val) {
 //  UPDATE ALL
 // ══════════════════════════════════════════════════
 function updateAll() {
-  const mult = (1 + marginPct / 100).toFixed(2).replace('.', ',');
-  document.getElementById('simFormula').textContent = mult;
-
   const isAnnual = billing === 'annuel';
   const gainWord = isAnnual ? 'Marge annuelle revendeur' : 'Marge mensuelle revendeur';
   document.getElementById('gainLabel360').textContent = gainWord;
@@ -1184,19 +1189,6 @@ function updateAll() {
 // ══════════════════════════════════════════════════
 //  EVENTS
 // ══════════════════════════════════════════════════
-document.getElementById('marginRange').addEventListener('input', e => {
-  marginPct = parseInt(e.target.value, 10);
-  document.getElementById('marginNum').value = marginPct;
-  updateAll();
-});
-document.getElementById('marginNum').addEventListener('input', e => {
-  let v = parseInt(e.target.value, 10);
-  if (isNaN(v)) return;
-  v = Math.max(0, Math.min(100, v));
-  marginPct = v;
-  document.getElementById('marginRange').value = v;
-  updateAll();
-});
 
 function setBilling(type) {
   billing = type;
@@ -1787,11 +1779,11 @@ function buildDevisPacks() {
   }
 
   addHeader('Fairwai 360 — Forfaits');
-  data360.forEach(row => {
-    const achat = devisBilling === 'annuel' ? row.annuelAchat : row.mensuelAchat;
+  data360.forEach((row, idx) => {
+    const prixVente = getAdjustedPrice('table360', idx, row, devisBilling === 'annuel');
     const label = `Pack 360 - ${row.palier.replace(' h','h')}`;
     const id = `pack-360-${row.palier.replace(/ /g,'_')}`;
-    container.appendChild(makeItem(id, label, achat * (1 + marginPct / 100)));
+    container.appendChild(makeItem(id, label, prixVente));
   });
   // Sur mesure 360
   if (currentPostes && currentPostes > 30) {
@@ -1799,16 +1791,16 @@ function buildDevisPacks() {
     const sm = getSurMesurePrice(smTiers360, hours, devisBilling === 'annuel');
     if (sm) {
       const label = `Pack 360 - Sur mesure (${currentPostes} utilisateurs · ${hours}h)`;
-      container.appendChild(makeItem('pack-360-sur-mesure', label, sm.achat * (1 + marginPct / 100)));
+      container.appendChild(makeItem('pack-360-sur-mesure', label, sm.client));
     }
   }
 
   addHeader('Fairwai Voice — Forfaits');
-  dataVoice.forEach(row => {
-    const achat = devisBilling === 'annuel' ? row.annuelAchat : row.mensuelAchat;
+  dataVoice.forEach((row, idx) => {
+    const prixVente = getAdjustedPrice('tableVoice', idx, row, devisBilling === 'annuel');
     const label = `Pack Voice - ${row.palier.replace(' h','h')}`;
     const id = `pack-voice-${row.palier.replace(/ /g,'_')}`;
-    container.appendChild(makeItem(id, label, achat * (1 + marginPct / 100)));
+    container.appendChild(makeItem(id, label, prixVente));
   });
   // Sur mesure Voice
   if (currentPostes && currentPostes > 30) {
@@ -1816,16 +1808,16 @@ function buildDevisPacks() {
     const sm = getSurMesurePrice(smTiersVoice, hours, devisBilling === 'annuel');
     if (sm) {
       const label = `Pack Voice - Sur mesure (${currentPostes} utilisateurs · ${hours}h)`;
-      container.appendChild(makeItem('pack-voice-sur-mesure', label, sm.achat * (1 + marginPct / 100)));
+      container.appendChild(makeItem('pack-voice-sur-mesure', label, sm.client));
     }
   }
 
   // Licences individuelles — prix par poste, quantité = nb postes
   addHeader('Licences individuelles');
-  const achatExec = devisBilling === 'annuel' ? licenceExec.annuelAchat : licenceExec.mensuelAchat;
-  const achatVoiceInd = devisBilling === 'annuel' ? licenceVoiceInd.annuelAchat : licenceVoiceInd.mensuelAchat;
-  container.appendChild(makeItem('pack-exec', 'Licence Executive Illimitée (individuelle)', achatExec * (1 + marginPct / 100), 'unit'));
-  container.appendChild(makeItem('pack-voice-ind', 'Licence Voice Individuelle Illimitée', achatVoiceInd * (1 + marginPct / 100), 'unit'));
+  const prixExec = devisBilling === 'annuel' ? licenceExec.clientAnnuel : licenceExec.clientMensuel;
+  const prixVoiceInd = devisBilling === 'annuel' ? licenceVoiceInd.clientAnnuel : licenceVoiceInd.clientMensuel;
+  container.appendChild(makeItem('pack-exec', 'Licence Executive Illimitée (individuelle)', prixExec, 'unit'));
+  container.appendChild(makeItem('pack-voice-ind', 'Licence Voice Individuelle Illimitée', prixVoiceInd, 'unit'));
 
   // Auto-select pack from simulator
   if (selectedPack) {
@@ -2065,10 +2057,7 @@ function sauvegarderDevis() {
   const totalNetMensuel = totalMensuelHT * (1 - remise / 100);
   const totalAnnuelHT = totalNetMensuel * 12;
 
-  // Gain = ce que le revendeur gagne (marge sur prix de vente)
-  // Le prix de vente inclut la marge. Gain mensuel = totalNetMensuel × marge / (100+marge)
-  const gainMensuel = totalNetMensuel * (marginPct / (100 + marginPct));
-  const gainAnnuel = gainMensuel * 12;
+  const gainAnnuel = null;
 
   const sims = loadSimulations();
   const isEditing = typeof window._editingSimIdx === 'number' && window._editingSimIdx >= 0 && window._editingSimIdx < sims.length;
@@ -2083,7 +2072,7 @@ function sauvegarderDevis() {
     ca: totalAnnuelHT,
     gain: gainAnnuel,
     billing: devisBilling,
-    marge: marginPct,
+    marge: null,
     status: isEditing ? (sims[window._editingSimIdx].status || 'en-cours') : 'en-cours',
     lostReason: isEditing ? (sims[window._editingSimIdx].lostReason || '') : '',
     // Champs complets pour restauration à l'édition
@@ -2234,20 +2223,19 @@ function updateSavingsBanner() {
 
   // ── Prix Fairwai (pack recommandé pour ce nombre d'utilisateurs) ──
   let fairwaiAchat = null;
-  if      (u <= 4)  { fairwaiAchat = isAnnual ? data360[0].annuelAchat : data360[0].mensuelAchat; }
-  else if (u <= 9)  { fairwaiAchat = isAnnual ? data360[1].annuelAchat : data360[1].mensuelAchat; }
-  else if (u <= 16) { fairwaiAchat = isAnnual ? data360[2].annuelAchat : data360[2].mensuelAchat; }
-  else if (u <= 23) { fairwaiAchat = isAnnual ? data360[3].annuelAchat : data360[3].mensuelAchat; }
-  else if (u <= 30) { fairwaiAchat = isAnnual ? data360[4].annuelAchat : data360[4].mensuelAchat; }
-  else {
+  let fairwaiPrixVente = null;
+  const packIdx = u <= 4 ? 0 : u <= 9 ? 1 : u <= 16 ? 2 : u <= 23 ? 3 : u <= 30 ? 4 : null;
+  if (packIdx !== null) {
+    fairwaiAchat = isAnnual ? data360[packIdx].annuelAchat : data360[packIdx].mensuelAchat;
+    fairwaiPrixVente = getAdjustedPrice('table360', packIdx, data360[packIdx], isAnnual);
+  } else {
     const hours = u * 5;
     const smResult = getSurMesurePrice(smTiers360, hours, isAnnual);
-    if (smResult) fairwaiAchat = smResult.achat;
+    if (smResult) { fairwaiAchat = smResult.achat; fairwaiPrixVente = smResult.client; }
   }
 
-  if (fairwaiAchat === null) { bar.style.display = 'none'; updateStickyTops(); return; }
+  if (fairwaiAchat === null || fairwaiPrixVente === null) { bar.style.display = 'none'; updateStickyTops(); return; }
 
-  const fairwaiPrixVente  = fairwaiAchat * (1 + marginPct / 100); // pool mensuel
   const fairwaiTelco      = telcoPricePerPoste * u;               // téléphonie mensuelle
   const fairwaiTotalMensuel = fairwaiPrixVente + fairwaiTelco;
   const fairwaiTotalAnnuel  = fairwaiTotalMensuel * 12;
