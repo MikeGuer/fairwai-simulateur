@@ -2500,8 +2500,69 @@ function closeSavingsPopover(e) {
 }
 
 // ══════════════════════════════════════════════════
+//  MIGRATION — recalcule gain pour simulations existantes (gain: null)
+// ══════════════════════════════════════════════════
+function migrateGains() {
+  const sims = loadSimulations();
+  let changed = false;
+  sims.forEach(sim => {
+    if (sim.gain !== null && sim.gain !== undefined) return; // déjà calculé
+    const billing = sim._form?.billing || sim.billing || 'annuel';
+    const isAnn = billing === 'annuel';
+    const remise = parseFloat(sim._form?.remise || 0) || 0;
+    const packs = sim._form?.packsSelected || [];
+    let totalGainBrut = 0;
+    packs.forEach(({ id, qty = 1 }) => {
+      qty = parseInt(qty) || 1;
+      let prix = 0, achat = 0;
+      // Packs 360
+      const row360 = data360.find(r => `pack-360-${r.palier.replace(/ /g,'_')}` === id);
+      if (row360) {
+        const pm = isAnn ? row360.clientAnnuel : row360.clientMensuel;
+        const am = isAnn ? row360.annuelAchat  : row360.mensuelAchat;
+        prix = isAnn ? pm * 12 : pm; achat = isAnn ? am * 12 : am;
+        totalGainBrut += (prix - achat) * qty; return;
+      }
+      // Packs Voice
+      const rowV = dataVoice.find(r => `pack-voice-${r.palier.replace(/ /g,'_')}` === id);
+      if (rowV) {
+        const pm = isAnn ? rowV.clientAnnuel : rowV.clientMensuel;
+        const am = isAnn ? rowV.annuelAchat  : rowV.mensuelAchat;
+        prix = isAnn ? pm * 12 : pm; achat = isAnn ? am * 12 : am;
+        totalGainBrut += (prix - achat) * qty; return;
+      }
+      // Licence Executive
+      if (id === 'pack-exec') {
+        const pm = isAnn ? licenceExec.clientAnnuel : licenceExec.clientMensuel;
+        const am = isAnn ? licenceExec.annuelAchat  : licenceExec.mensuelAchat;
+        prix = isAnn ? pm * 12 : pm; achat = isAnn ? am * 12 : am;
+        totalGainBrut += (prix - achat) * qty; return;
+      }
+      // Licence Voice individuelle
+      if (id === 'pack-voice-ind') {
+        const pm = isAnn ? licenceVoiceInd.clientAnnuel : licenceVoiceInd.clientMensuel;
+        const am = isAnn ? licenceVoiceInd.annuelAchat  : licenceVoiceInd.mensuelAchat;
+        prix = isAnn ? pm * 12 : pm; achat = isAnn ? am * 12 : am;
+        totalGainBrut += (prix - achat) * qty; return;
+      }
+      // Sur mesure : estimer via CA stocké (ratio moyen 30%)
+      if (id === 'pack-360-sur-mesure' || id === 'pack-voice-sur-mesure') {
+        const ratio = id === 'pack-360-sur-mesure' ? 0.22 : 0.22;
+        totalGainBrut += (sim.ca || 0) * ratio / 12; // rough estimate
+      }
+    });
+    if (totalGainBrut > 0) {
+      sim.gain = totalGainBrut * (1 - remise / 100) * 12;
+      changed = true;
+    }
+  });
+  if (changed) saveSimulations(sims);
+}
+
+// ══════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════
+migrateGains();
 updateAll();
 updateStickyTops();
 updatePortfolio();
