@@ -1763,13 +1763,15 @@ function buildDevisPacks() {
 
   // type: 'pool' = licence partagée (qté=1), 'unit' = par poste (qté=nb postes)
   // noAnnual: true = ne pas multiplier par 12 même en facturation annuelle (ex: recharges)
-  function makeItem(id, label, prixMensuel, type = 'pool', noAnnual = false) {
+  function makeItem(id, label, prixMensuel, type = 'pool', noAnnual = false, achatMensuel = 0) {
     const prixDevis = (isAnnualBilling && !noAnnual) ? prixMensuel * 12 : prixMensuel;
+    const achatDevis = (isAnnualBilling && !noAnnual) ? achatMensuel * 12 : achatMensuel;
     const uniteLabel = noAnnual ? '/unité' : bl;
     const div = document.createElement('div');
     div.className = 'devis-pack-item';
     div.dataset.packId = id;
     div.dataset.prix = prixDevis;
+    div.dataset.achat = achatDevis;
     div.dataset.label = label;
     div.dataset.unite = uniteLabel;
     div.dataset.type = type;
@@ -1796,10 +1798,12 @@ function buildDevisPacks() {
 
   addHeader('Fairwai 360 — Forfaits');
   data360.forEach((row, idx) => {
-    const prixVente = getAdjustedPrice('table360', idx, row, devisBilling === 'annuel');
+    const isAnn = devisBilling === 'annuel';
+    const prixVente = getAdjustedPrice('table360', idx, row, isAnn);
+    const achat = isAnn ? row.annuelAchat : row.mensuelAchat;
     const label = `Pack 360 - ${row.palier.replace(' h','h')}`;
     const id = `pack-360-${row.palier.replace(/ /g,'_')}`;
-    container.appendChild(makeItem(id, label, prixVente));
+    container.appendChild(makeItem(id, label, prixVente, 'pool', false, achat));
   });
   // Sur mesure 360
   if (currentPostes && currentPostes > 30) {
@@ -1807,16 +1811,18 @@ function buildDevisPacks() {
     const sm = getSurMesurePrice(smTiers360, hours, devisBilling === 'annuel');
     if (sm) {
       const label = `Pack 360 - Sur mesure (${currentPostes} utilisateurs · ${hours}h)`;
-      container.appendChild(makeItem('pack-360-sur-mesure', label, sm.client));
+      container.appendChild(makeItem('pack-360-sur-mesure', label, sm.client, 'pool', false, sm.achat));
     }
   }
 
   addHeader('Fairwai Voice — Forfaits');
   dataVoice.forEach((row, idx) => {
-    const prixVente = getAdjustedPrice('tableVoice', idx, row, devisBilling === 'annuel');
+    const isAnn = devisBilling === 'annuel';
+    const prixVente = getAdjustedPrice('tableVoice', idx, row, isAnn);
+    const achat = isAnn ? row.annuelAchat : row.mensuelAchat;
     const label = `Pack Voice - ${row.palier.replace(' h','h')}`;
     const id = `pack-voice-${row.palier.replace(/ /g,'_')}`;
-    container.appendChild(makeItem(id, label, prixVente));
+    container.appendChild(makeItem(id, label, prixVente, 'pool', false, achat));
   });
   // Sur mesure Voice
   if (currentPostes && currentPostes > 30) {
@@ -1824,16 +1830,19 @@ function buildDevisPacks() {
     const sm = getSurMesurePrice(smTiersVoice, hours, devisBilling === 'annuel');
     if (sm) {
       const label = `Pack Voice - Sur mesure (${currentPostes} utilisateurs · ${hours}h)`;
-      container.appendChild(makeItem('pack-voice-sur-mesure', label, sm.client));
+      container.appendChild(makeItem('pack-voice-sur-mesure', label, sm.client, 'pool', false, sm.achat));
     }
   }
 
   // Licences individuelles — prix par poste, quantité = nb postes
   addHeader('Licences individuelles');
-  const prixExec = devisBilling === 'annuel' ? licenceExec.clientAnnuel : licenceExec.clientMensuel;
-  const prixVoiceInd = devisBilling === 'annuel' ? licenceVoiceInd.clientAnnuel : licenceVoiceInd.clientMensuel;
-  container.appendChild(makeItem('pack-exec', 'Licence Executive Illimitée (individuelle)', prixExec, 'unit'));
-  container.appendChild(makeItem('pack-voice-ind', 'Licence Voice Individuelle Illimitée', prixVoiceInd, 'unit'));
+  const isAnn = devisBilling === 'annuel';
+  const prixExec = isAnn ? licenceExec.clientAnnuel : licenceExec.clientMensuel;
+  const achatExec = isAnn ? licenceExec.annuelAchat : licenceExec.mensuelAchat;
+  const prixVoiceInd = isAnn ? licenceVoiceInd.clientAnnuel : licenceVoiceInd.clientMensuel;
+  const achatVoiceInd = isAnn ? licenceVoiceInd.annuelAchat : licenceVoiceInd.mensuelAchat;
+  container.appendChild(makeItem('pack-exec', 'Licence Executive Illimitée (individuelle)', prixExec, 'unit', false, achatExec));
+  container.appendChild(makeItem('pack-voice-ind', 'Licence Voice Individuelle Illimitée', prixVoiceInd, 'unit', false, achatVoiceInd));
 
   // Auto-select pack from simulator
   if (selectedPack) {
@@ -2073,7 +2082,16 @@ function sauvegarderDevis() {
   const totalNetMensuel = totalMensuelHT * (1 - remise / 100);
   const totalAnnuelHT = totalNetMensuel * 12;
 
-  const gainAnnuel = null;
+  // Calculer la marge réelle = somme (prix_vente - prix_achat) × qté pour chaque pack sélectionné
+  let totalGainMensuelBrut = 0;
+  document.querySelectorAll('.devis-pack-item.selected').forEach(item => {
+    const prix = parseFloat(item.dataset.prix) || 0;
+    const achat = parseFloat(item.dataset.achat) || 0;
+    const qty = parseInt(item.querySelector('.dv-qty')?.value) || 1;
+    totalGainMensuelBrut += (prix - achat) * qty;
+  });
+  const gainNetMensuel = totalGainMensuelBrut * (1 - remise / 100);
+  const gainAnnuel = gainNetMensuel * 12;
 
   const sims = loadSimulations();
   const isEditing = typeof window._editingSimIdx === 'number' && window._editingSimIdx >= 0 && window._editingSimIdx < sims.length;
